@@ -66,7 +66,7 @@ Severity: 🔴 High · 🟠 Medium · 🟡 Low
 | A8 | Repository read leaks | 🟡 | Verify repos don't expose `IQueryable`; queries should be encapsulated or use read models. | Keep repos task-returning; add dedicated read queries/projections. |
 | A9 | No infra for scale targets | 🟠 | SignalR/Redis/RabbitMQ/MinIO referenced but unimplemented; "millions of users" claims unmet. | Implement per roadmap M3–M5. |
 | A10 | No tests | 🟠 | Zero unit/integration tests; refactors are unsafe. | Add `Domain.UnitTests`, `Application.UnitTests`, `Api.IntegrationTests` (Testcontainers). |
-| A11 | No structured logging / observability | 🟡 | Serilog referenced, not configured; no health checks, metrics, tracing. | Configure Serilog + request logging; add `/health`, OpenTelemetry. |
+| A11 | ~~No structured logging / observability~~ | 🟡 Partial (M0) | **Done:** Serilog provider + console sink + request logging + MediatR `LoggingBehavior`; health checks at `/health`, `/health/live`, `/health/ready`. **Remaining:** OpenTelemetry traces/metrics, config-driven Serilog (`ReadFrom.Configuration`). | Add OpenTelemetry next. |
 | A12 | Nullable warnings on aggregates | 🟡 | 13 CS8618 warnings (EF-only ctors). | Suppress per-member with `= null!` or `required`, document the EF-ctor pattern. |
 
 ## 5. Target architecture (where we're heading)

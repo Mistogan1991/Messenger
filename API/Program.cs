@@ -3,11 +3,16 @@ using Messenger.API.Middlewares;
 using Messenger.API.Swagger;
 using Messenger.Application;
 using Messenger.Infrastructure;
+using Messenger.Infrastructure.Logging;
 using Messenger.Persistence;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
+using Microsoft.Extensions.Diagnostics.HealthChecks;
+using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
+builder.AddSerilogLogging();
 builder.AddApplicationServices();
 builder.AddInfrastructureServices();
 builder.AddPersistenceServices();
@@ -25,6 +30,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseMiddleware<ExceptionHandlingMiddleware>();
+app.UseSerilogRequestLogging();
 app.UseSwaggerConfiguration();
 
 app.UseHttpsRedirection();
@@ -32,5 +38,15 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
+
+app.MapHealthChecks("/health");
+app.MapHealthChecks("/health/live", new HealthCheckOptions
+{
+    Predicate = check => check.Tags.Contains("live")
+});
+app.MapHealthChecks("/health/ready", new HealthCheckOptions
+{
+    Predicate = check => check.Tags.Contains("ready")
+});
 
 app.Run();
