@@ -1,3 +1,4 @@
+using System.Linq.Expressions;
 using Messenger.Domain.Aggregates.Auth;
 using Messenger.Domain.Aggregates.Chats;
 using Messenger.Domain.Aggregates.Messages;
@@ -30,16 +31,27 @@ public sealed class ApplicationDbContext : DbContext
     {
         modelBuilder.ApplyConfigurationsFromAssembly(typeof(ApplicationDbContext).Assembly);
 
-        //foreach (var entityType in modelBuilder.Model.GetEntityTypes())
-        //{
-        //    if (typeof(SoftDeletableEntity<Guid>).IsAssignableFrom(entityType.ClrType))
-        //    {
-        //        modelBuilder.Entity(entityType.ClrType)
-        //            .HasQueryFilter(GenerateFilterExpression(entityType.ClrType));
-        //    }
-        //}
+        // Exclude soft-deleted rows from every query by default. Use IgnoreQueryFilters() to read them.
+        foreach (var entityType in modelBuilder.Model.GetEntityTypes())
+        {
+            if (typeof(SoftDeletableEntity<Guid>).IsAssignableFrom(entityType.ClrType))
+            {
+                modelBuilder.Entity(entityType.ClrType)
+                    .HasQueryFilter(BuildSoftDeleteFilter(entityType.ClrType));
+            }
+        }
 
         base.OnModelCreating(modelBuilder);
+    }
+
+    /// <summary>Builds <c>e =&gt; e.DeletedAtUtc == null</c> for the given soft-deletable entity type.</summary>
+    private static LambdaExpression BuildSoftDeleteFilter(Type clrType)
+    {
+        var parameter = Expression.Parameter(clrType, "e");
+        var property = Expression.Property(parameter, nameof(SoftDeletableEntity<Guid>.DeletedAtUtc));
+        var body = Expression.Equal(property, Expression.Constant(null, typeof(DateTime?)));
+
+        return Expression.Lambda(body, parameter);
     }
 
     /// <summary>

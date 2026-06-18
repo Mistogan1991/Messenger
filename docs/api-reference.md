@@ -50,6 +50,7 @@
 |---|---|---|---|
 | POST | `groups` | `CreateGroupCommand` | ✅ |
 | POST | `channels` | `CreateChannelCommand` | ✅ |
+| POST | `private/{userId}` | `StartPrivateChatCommand` | ✅ _(M1)_ idempotent |
 | POST | `{chatId}/join` | `JoinChannelCommand` | ✅ |
 | POST | `{chatId}/leave` | `LeaveChatCommand` | ✅ |
 | POST | `{chatId}/members` | `AddMembersCommand` | ✅ |
@@ -61,7 +62,6 @@
 | POST | `{chatId}/mute` `/unmute` | `MuteChatCommand` / `UnMuteChatCommand` | ✅ |
 | POST | `{chatId}/archive` `/unarchive` | `ArchiveChatCommand` / `UnArchiveChatCommand` | ✅ |
 | POST | `{chatId}/pin` `/unpin` | `PinChatCommand` / `UnPinChatCommand` | ✅ |
-| — | **(missing)** start private chat | `StartPrivateChatCommand` (not implemented) | ❌ |
 | — | **(missing)** list my chats | `GetMyChatsQuery` (not implemented) | ❌ |
 | — | **(missing)** get chat members | `GetChatMembersQuery` exists, **no endpoint** | 🟡 |
 

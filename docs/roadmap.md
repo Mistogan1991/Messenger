@@ -15,16 +15,16 @@
 | Transactional outbox + `OutboxProcessor` | Atomicity + reliable at-least-once publish | dispatcher | Med | M | ✅ Done |
 | Serilog + request logging + `LoggingBehavior` + `/health` | Operability baseline | — | Low | S | ✅ Done |
 | `TransactionBehavior` (multi-step commands) | Wrap command handlers in a transaction | outbox | Low | S | ⏳ Next |
-| Re-enable soft-delete query filter | Deleted rows leak into reads | — | Low | S | ⏳ Next |
+| Re-enable soft-delete query filter | Deleted rows leak into reads | — | Low | S | ✅ Done |
 | OpenTelemetry traces + metrics | Full observability | Serilog | Med | M | ⏳ Next |
 | Integration tests (Testcontainers) | End-to-end safety | unit tests | Med | M | ⏳ Next |
 
 ## Milestone 1 — Core chat completeness
-| Task | Why | Depends on | Risk | Effort |
-|---|---|---|---|---|
-| `StartPrivateChat` command + endpoint | Cannot DM today | M0 | Low | S |
-| `GetMyChats` (chat list w/ last message, unread) | Primary app screen | read models | Med | M |
-| Expose `GetChatMessages` / `GetMessage` / `GetChatMembers` endpoints | Queries exist, unexposed | — | Low | S |
+| Task | Why | Depends on | Risk | Effort | Status |
+|---|---|---|---|---|---|
+| `StartPrivateChat` command + endpoint | Cannot DM today | M0 | Low | S | ✅ Done |
+| `GetMyChats` (chat list w/ last message, unread) | Primary app screen | read models | Med | M | ⏳ Next |
+| Expose `GetChatMessages` / `GetMessage` / `GetChatMembers` endpoints | Queries exist, unexposed | — | Low | S | ⏳ Next |
 | Owner-leave ownership transfer rule | Invariant gap | M0 | Low | S |
 | Channel posting permission rules | Channels are half-built | M0 | Med | M |
 

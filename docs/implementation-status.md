@@ -36,7 +36,7 @@ Legend: ✅ Completed · 🟡 Partial · ❌ Missing / scaffolded only
 | Blocked users | ✅ | Block/unblock/list |
 | Chats — groups | ✅ | Create, edit, members, admins, leave |
 | Chats — channels | 🟡 | Create/join exist; no posting rules, no subscriber model |
-| Chats — private/saved | 🟡 | Factory methods exist; **no command/endpoint to start a private chat** |
+| Chats — private/saved | 🟡 | `StartPrivateChat` command + endpoint added (idempotent) _(M1)_; Saved Messages still has no command |
 | Chat membership ops | ✅ | Add/remove members, promote/demote admin |
 | Chat per-user state | ✅ | Mute/archive/pin (on `ChatParticipant`) |
 | Messaging — send/edit/delete | ✅ | Text only |
@@ -72,7 +72,7 @@ Legend: ✅ Completed · 🟡 Partial · ❌ Missing / scaffolded only
 | `UserController` | GET user-profile/{id} | 🟡 | search users, resolve by username |
 | `ContactController` | POST, PUT, DELETE, GET, GET search | ✅ | — |
 | `BlockedUsersController` | POST/DELETE/GET | ✅ | — |
-| `ChatsController` | groups, channels, join, leave, members add/remove, promote/demote, GET/PUT info, mute/unmute, archive/unarchive, pin/unpin | 🟡 | **start private chat**, list my chats, GET members endpoint, leave-ownership transfer |
+| `ChatsController` | groups, channels, **private/{userId}**, join, leave, members add/remove, promote/demote, GET/PUT info, mute/unmute, archive/unarchive, pin/unpin | 🟡 | list my chats, GET members endpoint, leave-ownership transfer |
 | `MessagesController` | send, edit, delete, reply, forward, read, reaction add/remove, attachment | 🟡 | get chat messages (query exists, **no endpoint**), get single message endpoint |
 
 > Note: `GetChatMessages`, `GetMessage`, `GetChatMembers`, `GetChatInfo` queries exist in the
@@ -92,8 +92,9 @@ Full table in `api-reference.md`.
 3. ~~**No validation execution**~~ — **FIXED (M0):** `ValidationBehavior` registered in the MediatR pipeline.
 4. **Migrations folder typo** — physical folder `Persistence/Migraions/`; csproj declares empty
    `Migrations/`. Cosmetic but confusing.
-5. **Soft-delete query filter disabled** — global filter commented out in `OnModelCreating`;
-   soft-deleted rows are returned by queries.
+5. ~~**Soft-delete query filter disabled**~~ — **FIXED (M0):** global `HasQueryFilter` re-enabled
+   for all `SoftDeletableEntity<Guid>` types; deleted rows are excluded by default
+   (`IgnoreQueryFilters()` to read them).
 6. **Mixed error strategy** — handlers both return `Result.Failure` and throw exceptions
    (`Domain*/NotFound/Forbidden`); `ExceptionHandlingMiddleware` catches the latter.
 7. **No transaction/outbox** — multi-aggregate writes are not transactional beyond a single
