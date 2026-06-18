@@ -92,8 +92,9 @@ Full table in `api-reference.md`.
 3. ~~**No validation execution**~~ — **FIXED (M0):** `ValidationBehavior` registered in the MediatR pipeline.
 4. **Migrations folder typo** — physical folder `Persistence/Migraions/`; csproj declares empty
    `Migrations/`. Cosmetic but confusing.
-5. **Soft-delete query filter disabled** — global filter commented out in `OnModelCreating`;
-   soft-deleted rows are returned by queries.
+5. ~~**Soft-delete query filter disabled**~~ — **FIXED (M0):** global `HasQueryFilter` re-enabled
+   for all `SoftDeletableEntity<Guid>` types; deleted rows are excluded by default
+   (`IgnoreQueryFilters()` to read them).
 6. **Mixed error strategy** — handlers both return `Result.Failure` and throw exceptions
    (`Domain*/NotFound/Forbidden`); `ExceptionHandlingMiddleware` catches the latter.
 7. **No transaction/outbox** — multi-aggregate writes are not transactional beyond a single

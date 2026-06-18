@@ -15,7 +15,7 @@
 | Transactional outbox + `OutboxProcessor` | Atomicity + reliable at-least-once publish | dispatcher | Med | M | ✅ Done |
 | Serilog + request logging + `LoggingBehavior` + `/health` | Operability baseline | — | Low | S | ✅ Done |
 | `TransactionBehavior` (multi-step commands) | Wrap command handlers in a transaction | outbox | Low | S | ⏳ Next |
-| Re-enable soft-delete query filter | Deleted rows leak into reads | — | Low | S | ⏳ Next |
+| Re-enable soft-delete query filter | Deleted rows leak into reads | — | Low | S | ✅ Done |
 | OpenTelemetry traces + metrics | Full observability | Serilog | Med | M | ⏳ Next |
 | Integration tests (Testcontainers) | End-to-end safety | unit tests | Med | M | ⏳ Next |
 
