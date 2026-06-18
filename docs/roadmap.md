@@ -23,7 +23,7 @@
 | Task | Why | Depends on | Risk | Effort | Status |
 |---|---|---|---|---|---|
 | `StartPrivateChat` command + endpoint | Cannot DM today | M0 | Low | S | ✅ Done |
-| `GetMyChats` (chat list w/ last message, unread) | Primary app screen | read models | Med | M | ⏳ Next |
+| `GetMyChats` (chat list w/ last-message preview + per-user flags) | Primary app screen | read models | Med | M | ✅ Done (unread count deferred — needs Postgres-validated query) |
 | Expose `GetChatMessages` / `GetMessage` / `GetChatMembers` endpoints | Queries exist, unexposed | — | Low | S | ⏳ Next |
 | Owner-leave ownership transfer rule | Invariant gap | M0 | Low | S |
 | Channel posting permission rules | Channels are half-built | M0 | Med | M |

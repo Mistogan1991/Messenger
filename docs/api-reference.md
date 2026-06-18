@@ -57,12 +57,12 @@
 | DELETE | `{chatId}/members/{userId}` | `RemoveMemberCommand` | ✅ |
 | POST | `{chatId}/promote-admin/{userId}` | `PromoteAdminCommand` | ✅ |
 | POST | `{chatId}/demote-admin/{userId}` | `DemoteAdminCommand` | ✅ |
+| GET | `my` | `GetMyChatsQuery` | ✅ _(M1)_ chat list w/ last-message preview + per-user flags |
 | GET | `{chatId}` | `GetChatInfoQuery` | ✅ |
 | PUT | `{chatId}` | `EditChatCommand` | ✅ |
 | POST | `{chatId}/mute` `/unmute` | `MuteChatCommand` / `UnMuteChatCommand` | ✅ |
 | POST | `{chatId}/archive` `/unarchive` | `ArchiveChatCommand` / `UnArchiveChatCommand` | ✅ |
 | POST | `{chatId}/pin` `/unpin` | `PinChatCommand` / `UnPinChatCommand` | ✅ |
-| — | **(missing)** list my chats | `GetMyChatsQuery` (not implemented) | ❌ |
 | — | **(missing)** get chat members | `GetChatMembersQuery` exists, **no endpoint** | 🟡 |
 
 ## Messages — `/api/messages`
