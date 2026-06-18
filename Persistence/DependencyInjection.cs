@@ -2,6 +2,7 @@
 using Messenger.Application.Common.Interfaces.Repositories;
 using Messenger.Domain.Aggregates.Auth;
 using Messenger.Persistence.Context;
+using Messenger.Persistence.Outbox;
 using Messenger.Persistence.Repositories;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -26,5 +27,10 @@ public static class DependencyInjection
         builder.Services.AddScoped<IUserRepository, UserRepository>();
         builder.Services.AddScoped<IChatRepository, ChatRepository>();
         builder.Services.AddScoped<IMessageRepository, MessageRepository>();
+
+        builder.Services.Configure<OutboxOptions>(
+            builder.Configuration.GetSection(OutboxOptions.SectionName));
+
+        builder.Services.AddHostedService<OutboxProcessor>();
     }
 }

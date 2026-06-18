@@ -1,23 +1,19 @@
-﻿using Messenger.Application.Common.Messaging;
 using Messenger.Domain.Aggregates.Auth;
 using Messenger.Domain.Aggregates.Chats;
 using Messenger.Domain.Aggregates.Messages;
 using Messenger.Domain.Aggregates.Users;
 using Messenger.Domain.Common;
+using Messenger.Persistence.Outbox;
 using Microsoft.EntityFrameworkCore;
 
 namespace Messenger.Persistence.Context;
 
 public sealed class ApplicationDbContext : DbContext
 {
-    private readonly IDomainEventDispatcher? _dispatcher;
-
-    public ApplicationDbContext(
-        DbContextOptions<ApplicationDbContext> options,
-        IDomainEventDispatcher? dispatcher = null) : base(options)
+    public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
     {
-        _dispatcher = dispatcher;
     }
+
     public DbSet<OtpCode> OtpCodes => Set<OtpCode>();
 
     public DbSet<User> Users => Set<User>();
@@ -27,6 +23,8 @@ public sealed class ApplicationDbContext : DbContext
     public DbSet<Message> Messages => Set<Message>();
 
     public DbSet<Domain.Aggregates.Files.File> Files => Set<Domain.Aggregates.Files.File>();
+
+    public DbSet<OutboxMessage> OutboxMessages => Set<OutboxMessage>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -44,7 +42,11 @@ public sealed class ApplicationDbContext : DbContext
         base.OnModelCreating(modelBuilder);
     }
 
-    public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
+    /// <summary>
+    /// Persists raised domain events into the outbox within the same transaction as the aggregate
+    /// changes. Publication happens asynchronously and at-least-once via <see cref="OutboxProcessor"/>.
+    /// </summary>
+    public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
     {
         var aggregatesWithEvents = ChangeTracker
             .Entries<IHasDomainEvents>()
@@ -52,18 +54,17 @@ public sealed class ApplicationDbContext : DbContext
             .Select(e => e.Entity)
             .ToList();
 
-        var domainEvents = aggregatesWithEvents
+        var outboxMessages = aggregatesWithEvents
             .SelectMany(a => a.DomainEvents)
+            .Select(OutboxMessage.Create)
             .ToList();
 
-        var result = await base.SaveChangesAsync(cancellationToken);
+        if (outboxMessages.Count != 0)
+            OutboxMessages.AddRange(outboxMessages);
 
         foreach (var aggregate in aggregatesWithEvents)
             aggregate.ClearDomainEvents();
 
-        if (_dispatcher is not null && domainEvents.Count != 0)
-            await _dispatcher.DispatchAsync(domainEvents, cancellationToken);
-
-        return result;
+        return base.SaveChangesAsync(cancellationToken);
     }
 }
