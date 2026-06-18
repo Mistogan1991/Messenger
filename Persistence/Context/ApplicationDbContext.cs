@@ -1,15 +1,22 @@
-﻿using Messenger.Domain.Aggregates.Auth;
+﻿using Messenger.Application.Common.Messaging;
+using Messenger.Domain.Aggregates.Auth;
 using Messenger.Domain.Aggregates.Chats;
 using Messenger.Domain.Aggregates.Messages;
 using Messenger.Domain.Aggregates.Users;
+using Messenger.Domain.Common;
 using Microsoft.EntityFrameworkCore;
 
 namespace Messenger.Persistence.Context;
 
 public sealed class ApplicationDbContext : DbContext
 {
-    public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
+    private readonly IDomainEventDispatcher? _dispatcher;
+
+    public ApplicationDbContext(
+        DbContextOptions<ApplicationDbContext> options,
+        IDomainEventDispatcher? dispatcher = null) : base(options)
     {
+        _dispatcher = dispatcher;
     }
     public DbSet<OtpCode> OtpCodes => Set<OtpCode>();
 
@@ -35,5 +42,28 @@ public sealed class ApplicationDbContext : DbContext
         //}
 
         base.OnModelCreating(modelBuilder);
+    }
+
+    public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
+    {
+        var aggregatesWithEvents = ChangeTracker
+            .Entries<IHasDomainEvents>()
+            .Where(e => e.Entity.DomainEvents.Count != 0)
+            .Select(e => e.Entity)
+            .ToList();
+
+        var domainEvents = aggregatesWithEvents
+            .SelectMany(a => a.DomainEvents)
+            .ToList();
+
+        var result = await base.SaveChangesAsync(cancellationToken);
+
+        foreach (var aggregate in aggregatesWithEvents)
+            aggregate.ClearDomainEvents();
+
+        if (_dispatcher is not null && domainEvents.Count != 0)
+            await _dispatcher.DispatchAsync(domainEvents, cancellationToken);
+
+        return result;
     }
 }

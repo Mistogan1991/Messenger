@@ -34,7 +34,7 @@ public sealed class SendMessageHandler : IAppRequestHandler<SendMessageCommand, 
         if (chat is null)
             return Result<Guid>.Failure(["Chat not found"]);
 
-        if (chat.GetParticipant(_currentUser.UserId) is null)
+        if (!chat.IsParticipant(_currentUser.UserId))
             return Result<Guid>.Failure(["You are not member of this chat"]);
 
         var message = Message.Send(

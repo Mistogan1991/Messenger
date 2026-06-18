@@ -1,4 +1,6 @@
 <Solution>
+  <Folder Name="/Application/" />
+  <Folder Name="/Domain/" />
   <Folder Name="/src/">
     <Project Path="API/Messenger.API.csproj" />
     <Project Path="Application/Messenger.Application.csproj" />
@@ -6,5 +8,8 @@
     <Project Path="Domain/Messenger.Domain.csproj" />
     <Project Path="Infrastructure/Messenger.Infrastructure.csproj" />
     <Project Path="Persistence/Messenger.Persistence.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/Messenger.UnitTests/Messenger.UnitTests.csproj" />
   </Folder>
 </Solution>

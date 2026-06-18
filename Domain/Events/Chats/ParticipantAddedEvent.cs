@@ -1,5 +1,5 @@
-﻿namespace Messenger.Domain.Events.Chats;
+using Messenger.Domain.Common;
 
-public class ParticipantAddedEvent
-{
-}
+namespace Messenger.Domain.Events.Chats;
+
+public sealed record ParticipantAddedEvent(Guid ChatId, Guid UserId) : DomainEvent;
