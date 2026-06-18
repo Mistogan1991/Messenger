@@ -1,0 +1,42 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Folder Include="Abstractions\Identity\" />
+    <Folder Include="Abstractions\Caching\" />
+    <Folder Include="Abstractions\Messaging\" />
+    <Folder Include="Abstractions\Clock\" />
+    <Folder Include="Abstractions\Storage\" />
+    <Folder Include="Abstractions\Persistence\" />
+    <Folder Include="Abstractions\Repositories\" />
+    <Folder Include="Abstractions\SignalR\" />
+    <Folder Include="Abstractions\Services\" />
+    <Folder Include="Behaviors\LoggingBehavior\" />
+    <Folder Include="Behaviors\TransactionBehavior\" />
+    <Folder Include="Behaviors\ValidationBehavior\" />
+    <Folder Include="Common\Behaviors\" />
+    <Folder Include="Features\Groups\" />
+    <Folder Include="Features\Channels\" />
+    <Folder Include="Features\Files\" />
+    <Folder Include="Features\Messages\Dtos\" />
+    <Folder Include="Features\Notifications\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="AutoMapper" Version="16.1.1" />
+    <PackageReference Include="FluentValidation" Version="12.1.1" />
+    <PackageReference Include="MediatR" Version="14.1.0" />
+    <PackageReference Include="Microsoft.Extensions.Hosting" Version="10.0.9" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Contracts\Messenger.Contracts.csproj" />
+    <ProjectReference Include="..\Domain\Messenger.Domain.csproj" />
+  </ItemGroup>
+
+</Project>

@@ -1,0 +1,10 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="API/Messenger.API.csproj" />
+    <Project Path="Application/Messenger.Application.csproj" />
+    <Project Path="Contracts/Messenger.Contracts.csproj" />
+    <Project Path="Domain/Messenger.Domain.csproj" />
+    <Project Path="Infrastructure/Messenger.Infrastructure.csproj" />
+    <Project Path="Persistence/Messenger.Persistence.csproj" />
+  </Folder>
+</Solution>
