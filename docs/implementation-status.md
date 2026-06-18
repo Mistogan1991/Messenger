@@ -1,0 +1,101 @@
+# Implementation Status
+
+> Audit date: 2026-06-18 · Branch: `claud` · Build: **succeeds** (0 errors, 13 nullable warnings)
+
+This document is the single source of truth for "what exists today" in the Messenger
+backend. It is generated from an audit of the actual code, not from intent.
+
+## 1. Solution structure
+
+Clean Architecture, 6 projects (`Messenger.slnx`):
+
+| Project | Layer | Responsibility |
+|---|---|---|
+| `Messenger.Domain` | Domain | Aggregates, entities, value objects, domain events, enums |
+| `Messenger.Application` | Application | CQRS commands/queries, handlers, DTOs, abstractions |
+| `Messenger.Contracts` | Contracts | Shared contracts (currently **empty**) |
+| `Messenger.Persistence` | Infrastructure | EF Core DbContext, configurations, repositories, migrations |
+| `Messenger.Infrastructure` | Infrastructure | Auth (JWT/OTP/hash), `CurrentUser` |
+| `Messenger.API` | Presentation | Controllers, request contracts, mappings, middleware |
+
+Dependency direction is correct: Domain has no outward references; Application depends only
+on Domain + Contracts; Infrastructure/Persistence depend inward; API composes everything.
+
+## 2. Feature status matrix
+
+Legend: ✅ Completed · 🟡 Partial · ❌ Missing / scaffolded only
+
+| Feature | Status | Notes |
+|---|---|---|
+| Auth — OTP request/verify | ✅ | OTP issued, hashed, verified; JWT + refresh token issued |
+| Auth — refresh token / sessions | ✅ | Sessions per device, revoke, revoke-all, list |
+| User profile | ✅ | Get/update profile, set username, bio |
+| Phone number change | ✅ | OTP-gated change flow |
+| Privacy settings | ✅ | Get/update, value object `UserPrivacySettings` |
+| Contacts | ✅ | Add/update/delete/list/search |
+| Blocked users | ✅ | Block/unblock/list |
+| Chats — groups | ✅ | Create, edit, members, admins, leave |
+| Chats — channels | 🟡 | Create/join exist; no posting rules, no subscriber model |
+| Chats — private/saved | 🟡 | Factory methods exist; **no command/endpoint to start a private chat** |
+| Chat membership ops | ✅ | Add/remove members, promote/demote admin |
+| Chat per-user state | ✅ | Mute/archive/pin (on `ChatParticipant`) |
+| Messaging — send/edit/delete | ✅ | Text only |
+| Messaging — reply | ✅ | `ReplyToMessageId` |
+| Messaging — forward | 🟡 | Aggregate + handler exist; forward author-hiding not exercised |
+| Reactions | ✅ | Add/remove, unique per (message,user,emoji) |
+| Read receipts | 🟡 | `MarkAsRead` sets last-read id; no per-message delivery/seen fan-out |
+| Attachments | 🟡 | `AddAttachment` links a fileId; **no upload pipeline / MinIO** |
+| File storage (MinIO) | ❌ | Package referenced, `Storage/` folder empty, no client/abstraction |
+| Realtime (SignalR) | ❌ | `Hubs/` and `SignalR/` folders empty; no hub, no DI |
+| Messaging bus (RabbitMQ/MassTransit) | ❌ | Packages referenced; `RabbitMQ/` folder empty; not wired |
+| Caching (Redis) | ❌ | Package referenced; `Redis/` folder empty; not wired |
+| Presence / typing / last-seen | ❌ | `LastSeenAt` commented out in `User` |
+| Notifications | ❌ | `NotificationType` enum only; `Features/Notifications/` empty |
+| Search (global / messages) | ❌ | Only contact search exists |
+| Logging / Serilog | ❌ | Package referenced; not configured in `Program.cs` |
+| Observability (health/metrics/tracing) | ❌ | None |
+| Domain events dispatch | ✅ | Events raised in `Message`/`Chat`; dispatched from `SaveChangesAsync` via `IDomainEventDispatcher` → MediatR. _(M0)_ |
+| Validation pipeline | ✅ | `ValidationBehavior` registered as open MediatR behavior; validators auto-registered. _(M0)_ |
+| MediatR pipeline behaviors | ❌ | `Behaviors/` folders empty (Logging/Transaction/Validation) |
+| AutoMapper usage | 🟡 | Package referenced; mapping done via hand-written extension methods |
+| Docker / docker-compose | ❌ | None present |
+| Tests (unit/integration) | 🟡 | `tests/Messenger.UnitTests` added (13 tests: domain events, validation behavior, dispatcher). No integration tests yet. _(M0)_ |
+| README | ❌ | One-line placeholder |
+
+## 3. Controllers
+
+| Controller | Endpoints | Status | Missing operations |
+|---|---|---|---|
+| `AuthController` | request-otp, verify-otp, refresh-token, logout, revoke-session, GET sessions | ✅ | revoke-all endpoint not exposed |
+| `ProfileController` | request/confirm phone change, set username, GET/PUT profile, GET/PUT privacy | ✅ | profile photo upload |
+| `UserController` | GET user-profile/{id} | 🟡 | search users, resolve by username |
+| `ContactController` | POST, PUT, DELETE, GET, GET search | ✅ | — |
+| `BlockedUsersController` | POST/DELETE/GET | ✅ | — |
+| `ChatsController` | groups, channels, join, leave, members add/remove, promote/demote, GET/PUT info, mute/unmute, archive/unarchive, pin/unpin | 🟡 | **start private chat**, list my chats, GET members endpoint, leave-ownership transfer |
+| `MessagesController` | send, edit, delete, reply, forward, read, reaction add/remove, attachment | 🟡 | get chat messages (query exists, **no endpoint**), get single message endpoint |
+
+> Note: `GetChatMessages`, `GetMessage`, `GetChatMembers`, `GetChatInfo` queries exist in the
+> Application layer but several are not all wired to endpoints. See `api-reference.md`.
+
+## 4. CQRS inventory
+
+~50 command/query handlers exist across Auth, Users (Profile/Privacy/Blocking), Contacts,
+Chats, Messages. All implement `IAppRequestHandler` and return `Result`/`Result<T>`.
+Full table in `api-reference.md`.
+
+## 5. Known correctness issues found during audit
+
+1. ~~**`SendMessageHandler` dead guard**~~ — **FIXED (M0):** replaced with `Chat.IsParticipant(userId)`.
+2. ~~**Domain events never raised**~~ — **FIXED (M0):** events raised in `Message`/`Chat` and
+   dispatched from `ApplicationDbContext.SaveChangesAsync` via `IDomainEventDispatcher`.
+3. ~~**No validation execution**~~ — **FIXED (M0):** `ValidationBehavior` registered in the MediatR pipeline.
+4. **Migrations folder typo** — physical folder `Persistence/Migraions/`; csproj declares empty
+   `Migrations/`. Cosmetic but confusing.
+5. **Soft-delete query filter disabled** — global filter commented out in `OnModelCreating`;
+   soft-deleted rows are returned by queries.
+6. **Mixed error strategy** — handlers both return `Result.Failure` and throw exceptions
+   (`Domain*/NotFound/Forbidden`); `ExceptionHandlingMiddleware` catches the latter.
+7. **No transaction/outbox** — multi-aggregate writes are not transactional beyond a single
+   `SaveChanges`; no outbox for reliable event/integration publishing.
+
+See `architecture.md` §Issues for severity and fixes.
