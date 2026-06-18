@@ -1,6 +1,8 @@
-﻿using Messenger.API.Swagger;
+﻿using Messenger.API.HealthChecks;
+using Messenger.API.Swagger;
 using Messenger.Application.Common.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 
@@ -18,6 +20,10 @@ public static class DependencyInjection
         builder.Services.AddControllers();
         builder.Services.AddEndpointsApiExplorer();
         builder.Services.AddSwaggerConfiguration(builder);
+
+        builder.Services.AddHealthChecks()
+            .AddCheck("self", () => HealthCheckResult.Healthy(), tags: ["live"])
+            .AddCheck<DatabaseHealthCheck>("database", tags: ["ready"]);
     }
 
     private static void AddJwtConfiguration(this IServiceCollection services, IHostApplicationBuilder builder)

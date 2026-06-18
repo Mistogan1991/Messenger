@@ -15,6 +15,7 @@ namespace Messenger.Application
             builder.Services.AddMediatR(cfg =>
             {
                 cfg.RegisterServicesFromAssembly(applicationAssembly);
+                cfg.AddOpenBehavior(typeof(LoggingBehavior<,>));
                 cfg.AddOpenBehavior(typeof(ValidationBehavior<,>));
             });
 
