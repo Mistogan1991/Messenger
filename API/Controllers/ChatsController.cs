@@ -8,6 +8,7 @@ using Messenger.Application.Features.Chats.Commands.MuteChat;
 using Messenger.Application.Features.Chats.Commands.PinChat;
 using Messenger.Application.Features.Chats.Commands.PromoteAdmin;
 using Messenger.Application.Features.Chats.Commands.RemoveMember;
+using Messenger.Application.Features.Chats.Commands.StartPrivateChat;
 using Messenger.Application.Features.Chats.Commands.UnArchiveChat;
 using Messenger.Application.Features.Chats.Commands.UnMuteChat;
 using Messenger.Application.Features.Chats.Commands.UnPinChat;
@@ -44,6 +45,17 @@ public class ChatsController : ControllerBase
     public async Task<IActionResult> CreateChannel(CreateChannelRequest request)
     {
         var result = await _mediator.Send(request.ToCommand());
+
+        if (!result.IsSuccess)
+            return BadRequest(result);
+
+        return Ok(result);
+    }
+
+    [HttpPost("private/{userId:guid}")]
+    public async Task<IActionResult> StartPrivate(Guid userId)
+    {
+        var result = await _mediator.Send(new StartPrivateChatCommand(userId));
 
         if (!result.IsSuccess)
             return BadRequest(result);
