@@ -1,5 +1,5 @@
-﻿namespace Messenger.Domain.Events.Messages;
+using Messenger.Domain.Common;
 
-public class MessageDeletedEvent
-{
-}
+namespace Messenger.Domain.Events.Messages;
+
+public sealed record MessageDeletedEvent(Guid MessageId, Guid ChatId) : DomainEvent;

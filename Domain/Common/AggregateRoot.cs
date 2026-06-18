@@ -1,6 +1,6 @@
 ﻿namespace Messenger.Domain.Common;
 
-public abstract class AggregateRoot<TId> : SoftDeletableEntity<TId> where TId : notnull
+public abstract class AggregateRoot<TId> : SoftDeletableEntity<TId>, IHasDomainEvents where TId : notnull
 {
     private readonly List<IDomainEvent> _domainEvents = [];
 

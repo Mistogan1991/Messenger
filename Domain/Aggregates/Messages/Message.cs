@@ -2,6 +2,7 @@
 using Messenger.Domain.Common;
 using Messenger.Domain.Common.Exceptions;
 using Messenger.Domain.Enums;
+using Messenger.Domain.Events.Messages;
 
 namespace Messenger.Domain.Aggregates.Messages;
 
@@ -80,7 +81,7 @@ public sealed class Message : AggregateRoot<Guid>
     {
         var message = new Message(Guid.NewGuid(), chatId, senderId, type, content);
 
-        //message.RaiseDomainEvent(new MessageSentEvent(message.Id));
+        message.RaiseDomainEvent(new MessageSentEvent(message.Id, message.ChatId, message.SenderId));
 
         return message;
     }
@@ -107,7 +108,7 @@ public sealed class Message : AggregateRoot<Guid>
     {
         MarkAsDelete();
         Content = null;
-        //RaiseDomainEvent(new MessageDeletedEvent(Id));
+        RaiseDomainEvent(new MessageDeletedEvent(Id, ChatId));
     }
 
     public void Edit(string content)
@@ -123,7 +124,7 @@ public sealed class Message : AggregateRoot<Guid>
 
         SetUpdated(SenderId);
 
-        //RaiseDomainEvent(new MessageEditedEvent(Id));
+        RaiseDomainEvent(new MessageEditedEvent(Id, ChatId));
     }
 
     public void AddAttachment(Guid fileId, string? caption)
@@ -136,6 +137,8 @@ public sealed class Message : AggregateRoot<Guid>
         if (_reactions.Any(x => x.UserId == userId && x.Emoji == emoji)) return;
 
         _reactions.Add(MessageReaction.Create(Id, userId, emoji));
+
+        RaiseDomainEvent(new MessageReactionAddedEvent(Id, userId, emoji));
     }
 
     public void RemoveReaction(Guid userId, string emoji)

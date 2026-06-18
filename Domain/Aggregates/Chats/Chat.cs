@@ -1,6 +1,7 @@
 ﻿using Messenger.Domain.Common;
 using Messenger.Domain.Common.Exceptions;
 using Messenger.Domain.Enums;
+using Messenger.Domain.Events.Chats;
 
 namespace Messenger.Domain.Aggregates.Chats;
 
@@ -36,6 +37,8 @@ public sealed class Chat : AggregateRoot<Guid>
 
         chat._participants.Add(ChatParticipant.Create(chat.Id, user2, ChatRole.Member));
 
+        chat.RaiseDomainEvent(new ChatCreatedEvent(chat.Id, chat.Type, user1));
+
         return chat;
     }
 
@@ -44,6 +47,8 @@ public sealed class Chat : AggregateRoot<Guid>
         var chat = new Chat(Guid.NewGuid(), ChatType.SavedMessages);
 
         chat._participants.Add(ChatParticipant.Create(chat.Id, userId, ChatRole.Owner));
+
+        chat.RaiseDomainEvent(new ChatCreatedEvent(chat.Id, chat.Type, userId));
 
         return chat;
     }
@@ -54,6 +59,8 @@ public sealed class Chat : AggregateRoot<Guid>
         chat.Title = title;
 
         chat._participants.Add(ChatParticipant.Create(chat.Id, ownerId, ChatRole.Owner));
+
+        chat.RaiseDomainEvent(new ChatCreatedEvent(chat.Id, chat.Type, ownerId));
 
         chat.AddParticipants(memberIds.Where(id => id != ownerId));
 
@@ -68,6 +75,8 @@ public sealed class Chat : AggregateRoot<Guid>
 
         chat._participants.Add(ChatParticipant.Create(chat.Id, ownerId, ChatRole.Owner));
 
+        chat.RaiseDomainEvent(new ChatCreatedEvent(chat.Id, chat.Type, ownerId));
+
         return chat;
     }
 
@@ -79,6 +88,8 @@ public sealed class Chat : AggregateRoot<Guid>
         chat.IsPublic = isPublic;
 
         chat._participants.Add(ChatParticipant.Create(chat.Id, ownerId, ChatRole.Owner));
+
+        chat.RaiseDomainEvent(new ChatCreatedEvent(chat.Id, chat.Type, ownerId));
 
         return chat;
     }
@@ -104,6 +115,11 @@ public sealed class Chat : AggregateRoot<Guid>
         IsPublic = isPublic;
     }
 
+    public bool IsParticipant(Guid userId)
+    {
+        return _participants.Any(x => x.UserId == userId);
+    }
+
     public ChatParticipant GetParticipant(Guid userId)
     {
         var participant = _participants.SingleOrDefault(x => x.UserId == userId);
@@ -122,6 +138,8 @@ public sealed class Chat : AggregateRoot<Guid>
         if (_participants.Any(x => x.UserId == userId)) return;
 
         _participants.Add(ChatParticipant.Create(Id, userId, ChatRole.Member));
+
+        RaiseDomainEvent(new ParticipantAddedEvent(Id, userId));
     }
 
     public void RemoveParticipant(Guid userId)
@@ -131,6 +149,8 @@ public sealed class Chat : AggregateRoot<Guid>
         if (participant is null) return;
 
         _participants.Remove(participant);
+
+        RaiseDomainEvent(new ParticipantRemovedEvent(Id, userId));
     }
 
     public void AddParticipants(IEnumerable<Guid> userIds)

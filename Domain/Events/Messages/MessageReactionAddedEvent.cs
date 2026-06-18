@@ -1,5 +1,5 @@
-﻿namespace Messenger.Domain.Events.Messages;
+using Messenger.Domain.Common;
 
-public class MessageReactionAddedEvent
-{
-}
+namespace Messenger.Domain.Events.Messages;
+
+public sealed record MessageReactionAddedEvent(Guid MessageId, Guid UserId, string Emoji) : DomainEvent;
