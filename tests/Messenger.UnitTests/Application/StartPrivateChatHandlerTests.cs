@@ -40,6 +40,8 @@ public class StartPrivateChatHandlerTests
         public Task<Chat?> GetByIdAsync(Guid id, CancellationToken ct) => Task.FromResult<Chat?>(null);
         public Task<Chat?> GetPrivateChatAsync(Guid userA, Guid userB, CancellationToken ct) =>
             Task.FromResult(ExistingPrivateChat);
+        public Task<List<Messenger.Application.Features.Chats.Dtos.MyChatDto>> GetUserChatsAsync(Guid userId, CancellationToken ct) =>
+            throw new NotSupportedException();
     }
 
     private sealed class FakeUserRepository : IUserRepository

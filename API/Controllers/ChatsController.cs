@@ -13,6 +13,7 @@ using Messenger.Application.Features.Chats.Commands.UnArchiveChat;
 using Messenger.Application.Features.Chats.Commands.UnMuteChat;
 using Messenger.Application.Features.Chats.Commands.UnPinChat;
 using Messenger.Application.Features.Chats.Queries.GetChatInfo;
+using Messenger.Application.Features.Chats.Queries.GetMyChats;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -122,6 +123,17 @@ public class ChatsController : ControllerBase
     public async Task<IActionResult> DemoteAdmin(Guid chatId, Guid userId)
     {
         var result = await _mediator.Send(new DemoteAdminCommand(chatId, userId));
+
+        if (!result.IsSuccess)
+            return BadRequest(result);
+
+        return Ok(result);
+    }
+
+    [HttpGet("my")]
+    public async Task<IActionResult> GetMyChats()
+    {
+        var result = await _mediator.Send(new GetMyChatsQuery());
 
         if (!result.IsSuccess)
             return BadRequest(result);
