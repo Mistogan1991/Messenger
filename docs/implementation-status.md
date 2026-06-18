@@ -54,12 +54,13 @@ Legend: ✅ Completed · 🟡 Partial · ❌ Missing / scaffolded only
 | Search (global / messages) | ❌ | Only contact search exists |
 | Logging / Serilog | ❌ | Package referenced; not configured in `Program.cs` |
 | Observability (health/metrics/tracing) | ❌ | None |
-| Domain events dispatch | ✅ | Events raised in `Message`/`Chat`; dispatched from `SaveChangesAsync` via `IDomainEventDispatcher` → MediatR. _(M0)_ |
+| Domain events dispatch | ✅ | Events raised in `Message`/`Chat`; persisted to a transactional **outbox** in `SaveChangesAsync` and published at-least-once by `OutboxProcessor` → MediatR. _(M0)_ |
+| Transactional outbox | ✅ | `outbox_messages` table + `OutboxProcessor` background service (polling, retry cap). Migration `AddOutboxMessages`. _(M0)_ |
 | Validation pipeline | ✅ | `ValidationBehavior` registered as open MediatR behavior; validators auto-registered. _(M0)_ |
 | MediatR pipeline behaviors | ❌ | `Behaviors/` folders empty (Logging/Transaction/Validation) |
 | AutoMapper usage | 🟡 | Package referenced; mapping done via hand-written extension methods |
 | Docker / docker-compose | ❌ | None present |
-| Tests (unit/integration) | 🟡 | `tests/Messenger.UnitTests` added (13 tests: domain events, validation behavior, dispatcher). No integration tests yet. _(M0)_ |
+| Tests (unit/integration) | 🟡 | `tests/Messenger.UnitTests` (20 tests: domain events, validation behavior, dispatcher, outbox round-trip + EF InMemory outbox flows). No full API integration tests yet. _(M0)_ |
 | README | ❌ | One-line placeholder |
 
 ## 3. Controllers

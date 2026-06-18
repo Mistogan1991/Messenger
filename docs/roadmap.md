@@ -11,8 +11,9 @@
 | Re-enable `RaiseDomainEvent` call sites | Events are dead code today | dispatcher | Low | S | ✅ Done |
 | `ValidationBehavior` + register validators | Commands reach handlers unvalidated | — | Low | S | ✅ Done |
 | Fix `SendMessage` membership guard (`IsParticipant`) | Correctness/security bug | — | Low | S | ✅ Done |
-| Unit test project (domain events, validation, dispatcher) | Safe refactoring | — | Med | M | 🟡 Started (13 tests) |
-| `TransactionBehavior` + outbox table | Atomicity + reliable publish | dispatcher | Med | M | ⏳ Next |
+| Unit test project (domain events, validation, dispatcher, outbox) | Safe refactoring | — | Med | M | 🟡 Started (20 tests) |
+| Transactional outbox + `OutboxProcessor` | Atomicity + reliable at-least-once publish | dispatcher | Med | M | ✅ Done |
+| `TransactionBehavior` (multi-step commands) | Wrap command handlers in a transaction | outbox | Low | S | ⏳ Next |
 | Re-enable soft-delete query filter | Deleted rows leak into reads | — | Low | S | ⏳ Next |
 | Serilog + request logging + `/health` | Operability baseline | — | Low | S | ⏳ Next |
 | Integration tests (Testcontainers) | End-to-end safety | unit tests | Med | M | ⏳ Next |
