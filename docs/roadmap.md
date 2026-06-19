@@ -26,15 +26,16 @@
 | `GetMyChats` (chat list w/ last-message preview + per-user flags) | Primary app screen | read models | Med | M | ✅ Done (unread count deferred — needs Postgres-validated query) |
 | `GetChatMessages` / `GetMessage` / `GetChatMembers` read endpoints | Read APIs missing | — | Low→Med | M | ✅ Done (GetChatMessages/GetMessage were empty stubs — built, not just wired; all member-gated) |
 | Owner-leave ownership transfer rule | Invariant gap | M0 | Low | S | ✅ Done (`Chat.Leave` — admin-first, else oldest member; chat never ownerless) |
-| Channel posting permission rules | Channels are half-built | M0 | Med | M |
+| Channel posting permission rules | Channels are half-built | M0 | Med | M | ✅ Done (`Chat.CanSendMessages`; enforced in Send/Reply/Forward — the latter two had no membership check before) |
 
 ## Milestone 2 — Messaging features
-| Task | Why | Depends on | Risk | Effort |
-|---|---|---|---|---|
-| MinIO storage abstraction + pre-signed upload/download | Attachments need real files | M0 | Med | M |
-| Wire `File` aggregate to upload pipeline | Metadata persistence | MinIO | Low | S |
-| Voice messages / media types | Telegram parity | MinIO | Med | M |
-| Per-message delivery + seen receipts | Status model beyond last-read | events | Med | M |
+| Task | Why | Depends on | Risk | Effort | Status |
+|---|---|---|---|---|---|
+| MinIO storage abstraction + pre-signed upload/download | Attachments need real files | M0 | Med | M | ✅ Done (`IFileStorage`/`MinioFileStorage`, Files API; not runtime-verified vs live MinIO) |
+| Wire `File` aggregate to upload pipeline | Metadata persistence | MinIO | Low | S | ✅ Done (`RequestFileUpload` persists `File`; `FileRepository`) |
+| Download authorization (chat-membership ACL) | Any authed user can mint a download URL today | MinIO | Med | S | ✅ Done (`IFileRepository.CanUserAccessAsync`: uploader / chat-member / profile photo) |
+| Voice messages / media types | Telegram parity | MinIO | Med | M | ⏳ Next |
+| Per-message delivery + seen receipts | Status model beyond last-read | events | Med | M | ⏳ Next |
 
 ## Milestone 3 — Realtime
 | Task | Why | Depends on | Risk | Effort | Status |
@@ -53,9 +54,9 @@
 | Global search (messages/users/chats) | Discovery | read models | High | L |
 
 ## Milestone 5 — Scale & production readiness
-| Task | Why | Depends on | Risk | Effort |
-|---|---|---|---|---|
-| Docker + docker-compose (api, pg, redis, rabbit, minio) | Repro/dev/prod parity | — | Low | M |
+| Task | Why | Depends on | Risk | Effort | Status |
+|---|---|---|---|---|---|
+| Docker + docker-compose (api, pg, redis, rabbit, minio) | Repro/dev/prod parity | — | Low | M | ✅ Done (Dockerfile + compose + migrate-on-startup; not yet built/run — no Docker in dev env) |
 | OpenTelemetry traces + metrics | Observability | Serilog | Med | M |
 | Rate limiting / abuse protection (Redis) | Safety at scale | Redis | Med | M |
 | Message partitioning / read-model store | Millions of users | M4 | High | L |

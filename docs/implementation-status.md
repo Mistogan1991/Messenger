@@ -35,7 +35,7 @@ Legend: ✅ Completed · 🟡 Partial · ❌ Missing / scaffolded only
 | Contacts | ✅ | Add/update/delete/list/search |
 | Blocked users | ✅ | Block/unblock/list |
 | Chats — groups | ✅ | Create, edit, members, admins, leave |
-| Chats — channels | 🟡 | Create/join exist; no posting rules, no subscriber model |
+| Chats — channels | 🟡 | Create/join exist; **posting restricted to owner/admins** _(M1, `Chat.CanSendMessages`)_; no dedicated subscriber model yet |
 | Chats — private/saved | 🟡 | `StartPrivateChat` command + endpoint added (idempotent) _(M1)_; Saved Messages still has no command |
 | Chat membership ops | ✅ | Add/remove members, promote/demote admin |
 | Chat per-user state | ✅ | Mute/archive/pin (on `ChatParticipant`) |
@@ -44,8 +44,8 @@ Legend: ✅ Completed · 🟡 Partial · ❌ Missing / scaffolded only
 | Messaging — forward | 🟡 | Aggregate + handler exist; forward author-hiding not exercised |
 | Reactions | ✅ | Add/remove, unique per (message,user,emoji) |
 | Read receipts | 🟡 | `MarkAsRead` sets last-read id; no per-message delivery/seen fan-out |
-| Attachments | 🟡 | `AddAttachment` links a fileId; **no upload pipeline / MinIO** |
-| File storage (MinIO) | ❌ | Package referenced, `Storage/` folder empty, no client/abstraction |
+| Attachments | 🟡 | `AddAttachment` links a fileId; upload pipeline now exists via Files API _(M2)_ |
+| File storage (MinIO) | 🟡 | `IFileStorage` + `MinioFileStorage` (pre-signed PUT/GET URLs); `RequestFileUpload`/`GetFileDownloadUrl` + `FilesController`; `FileRepository` with **download ACL** (uploader / chat-member / profile photo). _(M2)_ Not yet runtime-verified against a live MinIO |
 | Realtime (SignalR) | 🟡 | `ChatHub` at `/hubs/chat` (JoinChat/LeaveChat, membership-gated); new messages pushed via outbox → `IRealtimeNotifier` (`MessageSent` event). _(M3)_ Typing/presence + Redis backplane pending; not runtime-verified |
 | Messaging bus (RabbitMQ/MassTransit) | ❌ | Packages referenced; `RabbitMQ/` folder empty; not wired |
 | Caching (Redis) | ❌ | Package referenced; `Redis/` folder empty; not wired |
@@ -59,9 +59,9 @@ Legend: ✅ Completed · 🟡 Partial · ❌ Missing / scaffolded only
 | Validation pipeline | ✅ | `ValidationBehavior` registered as open MediatR behavior; validators auto-registered. _(M0)_ |
 | MediatR pipeline behaviors | ❌ | `Behaviors/` folders empty (Logging/Transaction/Validation) |
 | AutoMapper usage | 🟡 | Package referenced; mapping done via hand-written extension methods |
-| Docker / docker-compose | ❌ | None present |
+| Docker / docker-compose | 🟡 | `Dockerfile` + `docker-compose.yml` (api, postgres, minio, redis, rabbitmq); migrate-on-startup. _(M5)_ **Not built/run here — no Docker in dev env** |
 | Tests (unit/integration) | 🟡 | `tests/Messenger.UnitTests` (20 tests: domain events, validation behavior, dispatcher, outbox round-trip + EF InMemory outbox flows). No full API integration tests yet. _(M0)_ |
-| README | ❌ | One-line placeholder |
+| README | ✅ | Overview, architecture table, Docker + local run instructions. _(M5)_ |
 
 ## 3. Controllers
 
@@ -74,6 +74,7 @@ Legend: ✅ Completed · 🟡 Partial · ❌ Missing / scaffolded only
 | `BlockedUsersController` | POST/DELETE/GET | ✅ | — |
 | `ChatsController` | groups, channels, **private/{userId}**, **GET my**, join, **leave (owner-transfer)**, members add/remove, **GET members**, promote/demote, GET/PUT info, mute/unmute, archive/unarchive, pin/unpin | 🟡 | saved-messages chat, channel subscriber model |
 | `MessagesController` | send, edit, delete, reply, forward, read, reaction add/remove, attachment, **GET chat/{chatId}** (paged), **GET {messageId}** | 🟡 | search, pin/unpin message |
+| `FilesController` | POST upload-url, GET {id}/download-url (ACL-gated) | ✅ _(M2)_ | — |
 
 > Note: `GetChatMessages` / `GetMessage` were empty template stubs — now **implemented** and
 > exposed (M1), member-gated. `GetChatMembers` now loads participants via a real projection

@@ -1,4 +1,5 @@
 using Messenger.API;
+using Messenger.API.Extensions;
 using Messenger.API.Hubs;
 using Messenger.API.Middlewares;
 using Messenger.API.Swagger;
@@ -23,6 +24,8 @@ builder.AddApiServices();
 builder.Services.AddOpenApi();
 
 var app = builder.Build();
+
+await app.ApplyMigrationsAsync();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
