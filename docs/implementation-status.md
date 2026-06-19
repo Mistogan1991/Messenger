@@ -52,6 +52,7 @@ Legend: ✅ Completed · 🟡 Partial · ❌ Missing / scaffolded only
 | Presence / typing / last-seen | ❌ | `LastSeenAt` commented out in `User` |
 | Notifications | ❌ | `NotificationType` enum only; `Features/Notifications/` empty |
 | Search (global / messages) | ❌ | Only contact search exists |
+| Rate limiting | 🟡 | Built-in ASP.NET limiter: global per-client (100/min) + tight OTP policy (5/5min) → 429. _(M5)_ Per-instance/in-memory; Redis-backed distributed limiter pending |
 | Logging / Serilog | ✅ | Serilog provider configured (`AddSerilogLogging`), console sink, request logging, MediatR `LoggingBehavior`. _(M0)_ |
 | Observability (health/metrics/tracing) | 🟡 | Health checks at `/health`, `/health/live`, `/health/ready` (DB readiness). Metrics/tracing (OpenTelemetry) still missing. _(M0)_ |
 | Domain events dispatch | ✅ | Events raised in `Message`/`Chat`; persisted to a transactional **outbox** in `SaveChangesAsync` and published at-least-once by `OutboxProcessor` → MediatR. _(M0)_ |
