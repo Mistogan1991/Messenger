@@ -16,6 +16,19 @@
     <PackageReference Include="Swashbuckle.AspNetCore" Version="10.2.1" />
   </ItemGroup>
 
+  <!--
+    MessagePack (transitive via Microsoft.AspNetCore.SignalR.StackExchangeRedis) is flagged by
+    GHSA-hv8m-jj95-wg3x. As of this writing NO patched MessagePack version exists (2.5.x and 3.1.x
+    are all flagged), so there is nothing to upgrade to. Exposure is low and accepted: MessagePack
+    is only used to serialize SignalR messages over the Redis backplane, whose data is produced by
+    our own API instances and confined to an internally-networked Redis (not reachable by end
+    users). Mitigation: keep Redis network-isolated. Remove this suppression once a fixed
+    MessagePack release is published.
+  -->
+  <ItemGroup>
+    <NuGetAuditSuppress Include="https://github.com/advisories/GHSA-hv8m-jj95-wg3x" />
+  </ItemGroup>
+
   <ItemGroup>
     <Folder Include="Hubs\" />
     <Folder Include="Extensions\" />
