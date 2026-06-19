@@ -120,6 +120,23 @@ public sealed class Chat : AggregateRoot<Guid>
         return _participants.Any(x => x.UserId == userId);
     }
 
+    /// <summary>
+    /// Whether the user may post messages here. In a channel only the owner and admins can post
+    /// (other participants are subscribers); in all other chat types any participant can post.
+    /// </summary>
+    public bool CanSendMessages(Guid userId)
+    {
+        var participant = _participants.SingleOrDefault(x => x.UserId == userId);
+
+        if (participant is null)
+            return false;
+
+        if (Type == ChatType.Channel)
+            return participant.Role is ChatRole.Owner or ChatRole.Admin;
+
+        return true;
+    }
+
     public ChatParticipant GetParticipant(Guid userId)
     {
         var participant = _participants.SingleOrDefault(x => x.UserId == userId);

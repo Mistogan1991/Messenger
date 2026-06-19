@@ -13,19 +13,30 @@ public sealed class ReplyMessageHandler
     private readonly IUnitOfWork _unitOfWork;
     private readonly ICurrentUser _currentUser;
     private readonly IMessageRepository _messageRepository;
+    private readonly IChatRepository _chatRepository;
 
     public ReplyMessageHandler(
         IUnitOfWork unitOfWork,
         ICurrentUser currentUser,
-        IMessageRepository messageRepository)
+        IMessageRepository messageRepository,
+        IChatRepository chatRepository)
     {
         _unitOfWork = unitOfWork;
         _currentUser = currentUser;
         _messageRepository = messageRepository;
+        _chatRepository = chatRepository;
     }
 
     public async Task<Result<Guid>> Handle(ReplyMessageCommand request, CancellationToken ct)
     {
+        var chat = await _chatRepository.GetByIdAsync(request.ChatId, ct);
+
+        if (chat is null)
+            return Result<Guid>.Failure(["Chat not found"]);
+
+        if (!chat.CanSendMessages(_currentUser.UserId))
+            return Result<Guid>.Failure(["You are not allowed to send messages in this chat"]);
+
         var source = await _messageRepository.GetByIdAsync(request.ReplyToMessageId, ct);
 
         if (source is null)
