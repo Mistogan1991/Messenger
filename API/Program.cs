@@ -15,6 +15,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.AddSerilogLogging();
+builder.AddOpenTelemetryObservability();
 builder.AddApplicationServices();
 builder.AddInfrastructureServices();
 builder.AddPersistenceServices();
