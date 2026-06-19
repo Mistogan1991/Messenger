@@ -72,11 +72,12 @@ Legend: ✅ Completed · 🟡 Partial · ❌ Missing / scaffolded only
 | `UserController` | GET user-profile/{id} | 🟡 | search users, resolve by username |
 | `ContactController` | POST, PUT, DELETE, GET, GET search | ✅ | — |
 | `BlockedUsersController` | POST/DELETE/GET | ✅ | — |
-| `ChatsController` | groups, channels, **private/{userId}**, join, leave, members add/remove, promote/demote, GET/PUT info, mute/unmute, archive/unarchive, pin/unpin | 🟡 | list my chats, GET members endpoint, leave-ownership transfer |
-| `MessagesController` | send, edit, delete, reply, forward, read, reaction add/remove, attachment | 🟡 | get chat messages (query exists, **no endpoint**), get single message endpoint |
+| `ChatsController` | groups, channels, **private/{userId}**, **GET my**, join, leave, members add/remove, promote/demote, GET/PUT info, mute/unmute, archive/unarchive, pin/unpin | 🟡 | GET members endpoint, leave-ownership transfer |
+| `MessagesController` | send, edit, delete, reply, forward, read, reaction add/remove, attachment, **GET chat/{chatId}** (paged), **GET {messageId}** | 🟡 | search, pin/unpin message |
 
-> Note: `GetChatMessages`, `GetMessage`, `GetChatMembers`, `GetChatInfo` queries exist in the
-> Application layer but several are not all wired to endpoints. See `api-reference.md`.
+> Note: `GetChatMessages` / `GetMessage` were empty template stubs — now **implemented** and
+> exposed (M1), member-gated. `GetChatMembers` now loads participants via a real projection
+> (the prior handler relied on an unloaded navigation). See `api-reference.md`.
 
 ## 4. CQRS inventory
 
