@@ -42,7 +42,7 @@
 |---|---|---|---|---|---|
 | SignalR hub — new-message push | Core realtime UX | M0 events | Med | L | ✅ Done (`ChatHub` + outbox→`IRealtimeNotifier`; not runtime-verified) |
 | Typing indicators | UX | SignalR | Low | S | ✅ Done (`ChatHub.Typing`/`StopTyping` → `UserTyping`/`UserStoppedTyping`, membership-gated; not runtime-verified) |
-| Redis backplane for SignalR | Scale-out | SignalR, Redis | Med | M | ⏳ Next |
+| Redis backplane for SignalR | Scale-out | SignalR, Redis | Med | M | ✅ Done (`AddStackExchangeRedis`, opt-in via `ConnectionStrings:Redis`; compose wired) |
 | Presence + last-seen (Redis) | Re-enable `LastSeenAt` | Redis | Med | M | ⏳ Next |
 
 ## Milestone 4 — Distributed infrastructure

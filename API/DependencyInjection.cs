@@ -23,7 +23,17 @@ public static class DependencyInjection
         builder.Services.AddEndpointsApiExplorer();
         builder.Services.AddSwaggerConfiguration(builder);
 
-        builder.Services.AddSignalR();
+        var signalR = builder.Services.AddSignalR();
+
+        // Use a Redis backplane when configured so SignalR can fan out across multiple API
+        // instances; without it the hub works in single-server mode (fine for local dev).
+        var redisConnection = builder.Configuration.GetConnectionString("Redis");
+        if (!string.IsNullOrWhiteSpace(redisConnection))
+        {
+            signalR.AddStackExchangeRedis(redisConnection, options =>
+                options.Configuration.ChannelPrefix = StackExchange.Redis.RedisChannel.Literal("messenger"));
+        }
+
         builder.Services.AddScoped<IRealtimeNotifier, SignalRRealtimeNotifier>();
 
         builder.Services.AddHealthChecks()

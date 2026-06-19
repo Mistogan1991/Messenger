@@ -48,7 +48,7 @@ Legend: ✅ Completed · 🟡 Partial · ❌ Missing / scaffolded only
 | File storage (MinIO) | 🟡 | `IFileStorage` + `MinioFileStorage` (pre-signed PUT/GET URLs); `RequestFileUpload`/`GetFileDownloadUrl` + `FilesController`; `FileRepository` with **download ACL** (uploader / chat-member / profile photo). _(M2)_ Not yet runtime-verified against a live MinIO |
 | Realtime (SignalR) | 🟡 | `ChatHub` at `/hubs/chat` (JoinChat/LeaveChat + **Typing/StopTyping**, all membership-gated); new messages pushed via outbox → `IRealtimeNotifier` (`MessageSent`); `UserTyping`/`UserStoppedTyping` to others. _(M3)_ Presence + Redis backplane pending; not runtime-verified |
 | Messaging bus (RabbitMQ/MassTransit) | ❌ | Packages referenced; `RabbitMQ/` folder empty; not wired |
-| Caching (Redis) | ❌ | Package referenced; `Redis/` folder empty; not wired |
+| Caching (Redis) | 🟡 | Wired as the **SignalR backplane** (`AddStackExchangeRedis`, enabled when `ConnectionStrings:Redis` is set). _(M3)_ Not yet used for general caching |
 | Presence / typing / last-seen | ❌ | `LastSeenAt` commented out in `User` |
 | Notifications | ❌ | `NotificationType` enum only; `Features/Notifications/` empty |
 | Search (global / messages) | ❌ | Only contact search exists |
