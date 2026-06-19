@@ -1,4 +1,5 @@
-﻿using Messenger.API.HealthChecks;
+﻿using Messenger.API.Extensions;
+using Messenger.API.HealthChecks;
 using Messenger.API.Swagger;
 using Messenger.Application.Common.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -20,6 +21,7 @@ public static class DependencyInjection
         builder.Services.AddControllers();
         builder.Services.AddEndpointsApiExplorer();
         builder.Services.AddSwaggerConfiguration(builder);
+        builder.Services.AddRateLimitingPolicies();
 
         builder.Services.AddHealthChecks()
             .AddCheck("self", () => HealthCheckResult.Healthy(), tags: ["live"])
