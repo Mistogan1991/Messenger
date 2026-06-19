@@ -12,19 +12,30 @@ public sealed class ForwardMessageHandler : IAppRequestHandler<ForwardMessageCom
     private readonly IUnitOfWork _unitOfWork;
     private readonly ICurrentUser _currentUser;
     private readonly IMessageRepository _messageRepository;
+    private readonly IChatRepository _chatRepository;
 
     public ForwardMessageHandler(
         IUnitOfWork unitOfWork,
         ICurrentUser currentUser,
-        IMessageRepository messageRepository)
+        IMessageRepository messageRepository,
+        IChatRepository chatRepository)
     {
         _unitOfWork = unitOfWork;
         _currentUser = currentUser;
         _messageRepository = messageRepository;
+        _chatRepository = chatRepository;
     }
 
     public async Task<Result<Guid>> Handle(ForwardMessageCommand request, CancellationToken ct)
     {
+        var targetChat = await _chatRepository.GetByIdAsync(request.TargetChatId, ct);
+
+        if (targetChat is null)
+            return Result<Guid>.Failure(["Chat not found"]);
+
+        if (!targetChat.CanSendMessages(_currentUser.UserId))
+            return Result<Guid>.Failure(["You are not allowed to send messages in this chat"]);
+
         var source = await _messageRepository.GetByIdAsync(request.SourceMessageId, ct);
 
         if (source is null)
