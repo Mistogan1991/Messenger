@@ -1,3 +1,4 @@
+using Messenger.Application.Abstractions.Authentication;
 using Messenger.Application.Abstractions.Storage;
 using Messenger.Application.Common.CQRS;
 using Messenger.Application.Common.Interfaces.Repositories;
@@ -9,11 +10,16 @@ public sealed class GetFileDownloadUrlHandler : IAppRequestHandler<GetFileDownlo
 {
     private static readonly TimeSpan DownloadUrlLifetime = TimeSpan.FromMinutes(15);
 
+    private readonly ICurrentUser _currentUser;
     private readonly IFileRepository _fileRepository;
     private readonly IFileStorage _fileStorage;
 
-    public GetFileDownloadUrlHandler(IFileRepository fileRepository, IFileStorage fileStorage)
+    public GetFileDownloadUrlHandler(
+        ICurrentUser currentUser,
+        IFileRepository fileRepository,
+        IFileStorage fileStorage)
     {
+        _currentUser = currentUser;
         _fileRepository = fileRepository;
         _fileStorage = fileStorage;
     }
@@ -25,9 +31,9 @@ public sealed class GetFileDownloadUrlHandler : IAppRequestHandler<GetFileDownlo
         if (file is null)
             return Result<string>.Failure(["File not found."]);
 
-        // NOTE: any authenticated user who knows the file id can currently mint a download URL.
-        // Proper access control (the file must be reachable via a chat the caller belongs to, or be
-        // the caller's own profile photo) requires a cross-aggregate lookup and is a tracked follow-up.
+        if (!await _fileRepository.CanUserAccessAsync(file.Id, _currentUser.UserId, ct))
+            return Result<string>.Failure(["You do not have access to this file."]);
+
         var url = await _fileStorage.CreatePresignedDownloadUrlAsync(file.StorageKey, DownloadUrlLifetime, ct);
 
         return Result<string>.Success(url);

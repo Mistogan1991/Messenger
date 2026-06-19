@@ -30,8 +30,10 @@ public class FileUploadHandlerTests
     {
         public File? Added { get; private set; }
         public File? ToReturn { get; set; }
+        public bool CanAccess { get; set; } = true;
         public Task AddAsync(File file, CancellationToken ct = default) { Added = file; return Task.CompletedTask; }
         public Task<File?> GetByIdAsync(Guid id, CancellationToken ct = default) => Task.FromResult(ToReturn);
+        public Task<bool> CanUserAccessAsync(Guid fileId, Guid userId, CancellationToken ct = default) => Task.FromResult(CanAccess);
     }
 
     private sealed class FakeFileStorage : IFileStorage
@@ -74,7 +76,8 @@ public class FileUploadHandlerTests
     [Fact]
     public async Task GetDownloadUrl_fails_when_the_file_does_not_exist()
     {
-        var handler = new GetFileDownloadUrlHandler(new FakeFileRepository { ToReturn = null }, new FakeFileStorage());
+        var handler = new GetFileDownloadUrlHandler(
+            new FakeCurrentUser(), new FakeFileRepository { ToReturn = null }, new FakeFileStorage());
 
         var result = await handler.Handle(new GetFileDownloadUrlQuery(Guid.NewGuid()), CancellationToken.None);
 
@@ -82,11 +85,26 @@ public class FileUploadHandlerTests
     }
 
     [Fact]
-    public async Task GetDownloadUrl_returns_a_presigned_url_for_the_stored_key()
+    public async Task GetDownloadUrl_is_denied_when_the_user_has_no_access()
     {
         var file = File.Create(Guid.NewGuid(), "doc.pdf", "key/abc.pdf", "application/pdf", 10, FileType.Document);
         var storage = new FakeFileStorage();
-        var handler = new GetFileDownloadUrlHandler(new FakeFileRepository { ToReturn = file }, storage);
+        var handler = new GetFileDownloadUrlHandler(
+            new FakeCurrentUser(), new FakeFileRepository { ToReturn = file, CanAccess = false }, storage);
+
+        var result = await handler.Handle(new GetFileDownloadUrlQuery(file.Id), CancellationToken.None);
+
+        Assert.False(result.IsSuccess);
+        Assert.Null(storage.DownloadKey);
+    }
+
+    [Fact]
+    public async Task GetDownloadUrl_returns_a_presigned_url_when_the_user_has_access()
+    {
+        var file = File.Create(Guid.NewGuid(), "doc.pdf", "key/abc.pdf", "application/pdf", 10, FileType.Document);
+        var storage = new FakeFileStorage();
+        var handler = new GetFileDownloadUrlHandler(
+            new FakeCurrentUser(), new FakeFileRepository { ToReturn = file, CanAccess = true }, storage);
 
         var result = await handler.Handle(new GetFileDownloadUrlQuery(file.Id), CancellationToken.None);
 
