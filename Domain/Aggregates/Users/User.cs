@@ -24,7 +24,7 @@ public class User : AggregateRoot<Guid>
     public string? LastName { get; private set; }
     public string? Bio { get; private set; }
     public UserPrivacySettings PrivacySettings { get; private set; }
-    //public DateTime LastSeenAt { get; private set; }
+    public DateTime? LastSeenAt { get; private set; }
 
     public IReadOnlyCollection<UserContact> Contacts => _contacts;
     public IReadOnlyCollection<BlockedUser> BlockedUsers => _blockedUsers;
@@ -96,11 +96,11 @@ public class User : AggregateRoot<Guid>
         _photos.Add(UserProfilePhoto.Create(Id, fileId));
     }
 
-    //public void SetLastSeen()
-    //{
-    //    LastSeenAt = DateTime.UtcNow;
-    //    SetUpdated(Id);
-    //}
+    public void SetLastSeen()
+    {
+        LastSeenAt = DateTime.UtcNow;
+        SetUpdated(Id);
+    }
 
     /* ====================== */
     /* ==== User Session ==== */

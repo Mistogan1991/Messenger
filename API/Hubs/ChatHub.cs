@@ -1,5 +1,8 @@
 using System.Security.Claims;
+using MediatR;
+using Messenger.Application.Abstractions.Realtime;
 using Messenger.Application.Common.Interfaces.Repositories;
+using Messenger.Application.Features.Users.Presence.Commands.MarkUserOffline;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.SignalR;
 
@@ -9,18 +12,39 @@ namespace Messenger.API.Hubs;
 /// Realtime chat hub. Clients call <c>JoinChat</c> for each chat they want live updates from and
 /// receive a <c>MessageSent</c> event when a new message arrives, plus <c>UserTyping</c> /
 /// <c>UserStoppedTyping</c> from other members. Membership is enforced on every operation.
+/// Online presence is tracked across the connection lifecycle.
 /// </summary>
 [Authorize]
 public sealed class ChatHub : Hub
 {
     private readonly IChatRepository _chatRepository;
+    private readonly IPresenceTracker _presenceTracker;
+    private readonly ISender _mediator;
 
-    public ChatHub(IChatRepository chatRepository)
+    public ChatHub(IChatRepository chatRepository, IPresenceTracker presenceTracker, ISender mediator)
     {
         _chatRepository = chatRepository;
+        _presenceTracker = presenceTracker;
+        _mediator = mediator;
     }
 
     public static string GroupName(Guid chatId) => $"chat:{chatId}";
+
+    public override async Task OnConnectedAsync()
+    {
+        await _presenceTracker.UserConnectedAsync(GetUserId());
+        await base.OnConnectedAsync();
+    }
+
+    public override async Task OnDisconnectedAsync(Exception? exception)
+    {
+        var userId = GetUserId();
+
+        if (await _presenceTracker.UserDisconnectedAsync(userId))
+            await _mediator.Send(new MarkUserOfflineCommand(userId));
+
+        await base.OnDisconnectedAsync(exception);
+    }
 
     public async Task JoinChat(Guid chatId)
     {

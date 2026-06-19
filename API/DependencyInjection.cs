@@ -3,9 +3,11 @@ using Messenger.API.Realtime;
 using Messenger.API.Swagger;
 using Messenger.Application.Abstractions.Realtime;
 using Messenger.Application.Common.Models;
+using Messenger.Infrastructure.Realtime;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.IdentityModel.Tokens;
+using StackExchange.Redis;
 using System.Text;
 
 namespace Messenger.API;
@@ -25,13 +27,22 @@ public static class DependencyInjection
 
         var signalR = builder.Services.AddSignalR();
 
-        // Use a Redis backplane when configured so SignalR can fan out across multiple API
-        // instances; without it the hub works in single-server mode (fine for local dev).
+        // Use a Redis backplane + shared presence store when configured so SignalR can fan out and
+        // presence is consistent across multiple API instances; without it the hub works in
+        // single-server mode with in-memory presence (fine for local dev).
         var redisConnection = builder.Configuration.GetConnectionString("Redis");
         if (!string.IsNullOrWhiteSpace(redisConnection))
         {
             signalR.AddStackExchangeRedis(redisConnection, options =>
-                options.Configuration.ChannelPrefix = StackExchange.Redis.RedisChannel.Literal("messenger"));
+                options.Configuration.ChannelPrefix = RedisChannel.Literal("messenger"));
+
+            builder.Services.AddSingleton<IConnectionMultiplexer>(
+                _ => ConnectionMultiplexer.Connect(redisConnection));
+            builder.Services.AddSingleton<IPresenceTracker, RedisPresenceTracker>();
+        }
+        else
+        {
+            builder.Services.AddSingleton<IPresenceTracker, InMemoryPresenceTracker>();
         }
 
         builder.Services.AddScoped<IRealtimeNotifier, SignalRRealtimeNotifier>();
