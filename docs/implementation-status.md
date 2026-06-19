@@ -72,7 +72,7 @@ Legend: ✅ Completed · 🟡 Partial · ❌ Missing / scaffolded only
 | `UserController` | GET user-profile/{id} | 🟡 | search users, resolve by username |
 | `ContactController` | POST, PUT, DELETE, GET, GET search | ✅ | — |
 | `BlockedUsersController` | POST/DELETE/GET | ✅ | — |
-| `ChatsController` | groups, channels, **private/{userId}**, join, leave, members add/remove, promote/demote, GET/PUT info, mute/unmute, archive/unarchive, pin/unpin | 🟡 | list my chats, GET members endpoint, leave-ownership transfer |
+| `ChatsController` | groups, channels, **private/{userId}**, join, **leave (owner-transfer)**, members add/remove, promote/demote, GET/PUT info, mute/unmute, archive/unarchive, pin/unpin | 🟡 | list my chats, GET members endpoint |
 | `MessagesController` | send, edit, delete, reply, forward, read, reaction add/remove, attachment | 🟡 | get chat messages (query exists, **no endpoint**), get single message endpoint |
 
 > Note: `GetChatMessages`, `GetMessage`, `GetChatMembers`, `GetChatInfo` queries exist in the
