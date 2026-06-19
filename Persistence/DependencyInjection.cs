@@ -27,6 +27,7 @@ public static class DependencyInjection
         builder.Services.AddScoped<IUserRepository, UserRepository>();
         builder.Services.AddScoped<IChatRepository, ChatRepository>();
         builder.Services.AddScoped<IMessageRepository, MessageRepository>();
+        builder.Services.AddScoped<IFileRepository, FileRepository>();
 
         builder.Services.Configure<OutboxOptions>(
             builder.Configuration.GetSection(OutboxOptions.SectionName));
