@@ -29,12 +29,13 @@
 | Channel posting permission rules | Channels are half-built | M0 | Med | M |
 
 ## Milestone 2 — Messaging features
-| Task | Why | Depends on | Risk | Effort |
-|---|---|---|---|---|
-| MinIO storage abstraction + pre-signed upload/download | Attachments need real files | M0 | Med | M |
-| Wire `File` aggregate to upload pipeline | Metadata persistence | MinIO | Low | S |
-| Voice messages / media types | Telegram parity | MinIO | Med | M |
-| Per-message delivery + seen receipts | Status model beyond last-read | events | Med | M |
+| Task | Why | Depends on | Risk | Effort | Status |
+|---|---|---|---|---|---|
+| MinIO storage abstraction + pre-signed upload/download | Attachments need real files | M0 | Med | M | ✅ Done (`IFileStorage`/`MinioFileStorage`, Files API; not runtime-verified vs live MinIO) |
+| Wire `File` aggregate to upload pipeline | Metadata persistence | MinIO | Low | S | ✅ Done (`RequestFileUpload` persists `File`; `FileRepository`) |
+| Download authorization (chat-membership ACL) | Any authed user can mint a download URL today | MinIO | Med | S | ⏳ Next |
+| Voice messages / media types | Telegram parity | MinIO | Med | M | ⏳ Next |
+| Per-message delivery + seen receipts | Status model beyond last-read | events | Med | M | ⏳ Next |
 
 ## Milestone 3 — Realtime
 | Task | Why | Depends on | Risk | Effort |
