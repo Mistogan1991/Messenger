@@ -33,7 +33,7 @@
 |---|---|---|---|---|---|
 | MinIO storage abstraction + pre-signed upload/download | Attachments need real files | M0 | Med | M | ✅ Done (`IFileStorage`/`MinioFileStorage`, Files API; not runtime-verified vs live MinIO) |
 | Wire `File` aggregate to upload pipeline | Metadata persistence | MinIO | Low | S | ✅ Done (`RequestFileUpload` persists `File`; `FileRepository`) |
-| Download authorization (chat-membership ACL) | Any authed user can mint a download URL today | MinIO | Med | S | ⏳ Next |
+| Download authorization (chat-membership ACL) | Any authed user can mint a download URL today | MinIO | Med | S | ✅ Done (`IFileRepository.CanUserAccessAsync`: uploader / chat-member / profile photo) |
 | Voice messages / media types | Telegram parity | MinIO | Med | M | ⏳ Next |
 | Per-message delivery + seen receipts | Status model beyond last-read | events | Med | M | ⏳ Next |
 

@@ -45,7 +45,7 @@ Legend: ✅ Completed · 🟡 Partial · ❌ Missing / scaffolded only
 | Reactions | ✅ | Add/remove, unique per (message,user,emoji) |
 | Read receipts | 🟡 | `MarkAsRead` sets last-read id; no per-message delivery/seen fan-out |
 | Attachments | 🟡 | `AddAttachment` links a fileId; upload pipeline now exists via Files API _(M2)_ |
-| File storage (MinIO) | 🟡 | `IFileStorage` + `MinioFileStorage` (pre-signed PUT/GET URLs); `RequestFileUpload`/`GetFileDownloadUrl` + `FilesController`; `FileRepository`. _(M2)_ Download ACL + not runtime-verified against a live MinIO |
+| File storage (MinIO) | 🟡 | `IFileStorage` + `MinioFileStorage` (pre-signed PUT/GET URLs); `RequestFileUpload`/`GetFileDownloadUrl` + `FilesController`; `FileRepository` with **download ACL** (uploader / chat-member / profile photo). _(M2)_ Not yet runtime-verified against a live MinIO |
 | Realtime (SignalR) | ❌ | `Hubs/` and `SignalR/` folders empty; no hub, no DI |
 | Messaging bus (RabbitMQ/MassTransit) | ❌ | Packages referenced; `RabbitMQ/` folder empty; not wired |
 | Caching (Redis) | ❌ | Package referenced; `Redis/` folder empty; not wired |
@@ -74,7 +74,7 @@ Legend: ✅ Completed · 🟡 Partial · ❌ Missing / scaffolded only
 | `BlockedUsersController` | POST/DELETE/GET | ✅ | — |
 | `ChatsController` | groups, channels, **private/{userId}**, **GET my**, join, **leave (owner-transfer)**, members add/remove, **GET members**, promote/demote, GET/PUT info, mute/unmute, archive/unarchive, pin/unpin | 🟡 | saved-messages chat, channel subscriber model |
 | `MessagesController` | send, edit, delete, reply, forward, read, reaction add/remove, attachment, **GET chat/{chatId}** (paged), **GET {messageId}** | 🟡 | search, pin/unpin message |
-| `FilesController` | POST upload-url, GET {id}/download-url | 🟡 _(M2)_ | download authorization (chat-membership ACL) |
+| `FilesController` | POST upload-url, GET {id}/download-url (ACL-gated) | ✅ _(M2)_ | — |
 
 > Note: `GetChatMessages` / `GetMessage` were empty template stubs — now **implemented** and
 > exposed (M1), member-gated. `GetChatMembers` now loads participants via a real projection
