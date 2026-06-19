@@ -1,5 +1,10 @@
-﻿namespace Messenger.Application.Common.Interfaces.Repositories;
+using File = Messenger.Domain.Aggregates.Files.File;
 
-internal interface IFileRepository
+namespace Messenger.Application.Common.Interfaces.Repositories;
+
+public interface IFileRepository
 {
+    Task AddAsync(File file, CancellationToken ct = default);
+
+    Task<File?> GetByIdAsync(Guid id, CancellationToken ct = default);
 }

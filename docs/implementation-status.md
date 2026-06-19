@@ -44,8 +44,8 @@ Legend: ✅ Completed · 🟡 Partial · ❌ Missing / scaffolded only
 | Messaging — forward | 🟡 | Aggregate + handler exist; forward author-hiding not exercised |
 | Reactions | ✅ | Add/remove, unique per (message,user,emoji) |
 | Read receipts | 🟡 | `MarkAsRead` sets last-read id; no per-message delivery/seen fan-out |
-| Attachments | 🟡 | `AddAttachment` links a fileId; **no upload pipeline / MinIO** |
-| File storage (MinIO) | ❌ | Package referenced, `Storage/` folder empty, no client/abstraction |
+| Attachments | 🟡 | `AddAttachment` links a fileId; upload pipeline now exists via Files API _(M2)_ |
+| File storage (MinIO) | 🟡 | `IFileStorage` + `MinioFileStorage` (pre-signed PUT/GET URLs); `RequestFileUpload`/`GetFileDownloadUrl` + `FilesController`; `FileRepository`. _(M2)_ Download ACL + not runtime-verified against a live MinIO |
 | Realtime (SignalR) | ❌ | `Hubs/` and `SignalR/` folders empty; no hub, no DI |
 | Messaging bus (RabbitMQ/MassTransit) | ❌ | Packages referenced; `RabbitMQ/` folder empty; not wired |
 | Caching (Redis) | ❌ | Package referenced; `Redis/` folder empty; not wired |
@@ -74,6 +74,7 @@ Legend: ✅ Completed · 🟡 Partial · ❌ Missing / scaffolded only
 | `BlockedUsersController` | POST/DELETE/GET | ✅ | — |
 | `ChatsController` | groups, channels, **private/{userId}**, **GET my**, join, **leave (owner-transfer)**, members add/remove, **GET members**, promote/demote, GET/PUT info, mute/unmute, archive/unarchive, pin/unpin | 🟡 | saved-messages chat, channel subscriber model |
 | `MessagesController` | send, edit, delete, reply, forward, read, reaction add/remove, attachment, **GET chat/{chatId}** (paged), **GET {messageId}** | 🟡 | search, pin/unpin message |
+| `FilesController` | POST upload-url, GET {id}/download-url | 🟡 _(M2)_ | download authorization (chat-membership ACL) |
 
 > Note: `GetChatMessages` / `GetMessage` were empty template stubs — now **implemented** and
 > exposed (M1), member-gated. `GetChatMembers` now loads participants via a real projection
