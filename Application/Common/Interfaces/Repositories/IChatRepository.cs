@@ -14,4 +14,10 @@ public interface IChatRepository
 
     /// <summary>Projects the chats the given user participates in into a chat-list read model.</summary>
     Task<List<MyChatDto>> GetUserChatsAsync(Guid userId, CancellationToken ct);
+
+    /// <summary>Returns whether the user is a (non-deleted) participant of the chat.</summary>
+    Task<bool> IsParticipantAsync(Guid chatId, Guid userId, CancellationToken ct);
+
+    /// <summary>Projects a chat's participants into member read models.</summary>
+    Task<List<ChatMemberDto>> GetMembersAsync(Guid chatId, CancellationToken ct);
 }
