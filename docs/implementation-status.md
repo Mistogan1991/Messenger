@@ -49,7 +49,7 @@ Legend: ✅ Completed · 🟡 Partial · ❌ Missing / scaffolded only
 | Realtime (SignalR) | 🟡 | `ChatHub` at `/hubs/chat` (JoinChat/LeaveChat + **Typing/StopTyping**, all membership-gated); new messages pushed via outbox → `IRealtimeNotifier` (`MessageSent`); `UserTyping`/`UserStoppedTyping` to others. _(M3)_ Presence + Redis backplane pending; not runtime-verified |
 | Messaging bus (RabbitMQ/MassTransit) | ❌ | Packages referenced; `RabbitMQ/` folder empty; not wired |
 | Caching (Redis) | 🟡 | Wired as the **SignalR backplane** (`AddStackExchangeRedis`, enabled when `ConnectionStrings:Redis` is set). _(M3)_ Not yet used for general caching |
-| Presence / typing / last-seen | ❌ | `LastSeenAt` commented out in `User` |
+| Presence / typing / last-seen | 🟡 | `User.LastSeenAt` re-enabled (migration `AddUserLastSeenAt`); `IPresenceTracker` (in-memory + Redis); hub tracks connect/disconnect, stamps last-seen on last disconnect; `GET /api/user/{id}/presence`. _(M3)_ Typing done separately; presence broadcast + last-seen privacy pending |
 | Notifications | ❌ | `NotificationType` enum only; `Features/Notifications/` empty |
 | Search (global / messages) | ❌ | Only contact search exists |
 | Logging / Serilog | ✅ | Serilog provider configured (`AddSerilogLogging`), console sink, request logging, MediatR `LoggingBehavior`. _(M0)_ |
@@ -69,7 +69,7 @@ Legend: ✅ Completed · 🟡 Partial · ❌ Missing / scaffolded only
 |---|---|---|---|
 | `AuthController` | request-otp, verify-otp, refresh-token, logout, revoke-session, GET sessions | ✅ | revoke-all endpoint not exposed |
 | `ProfileController` | request/confirm phone change, set username, GET/PUT profile, GET/PUT privacy | ✅ | profile photo upload |
-| `UserController` | GET user-profile/{id} | 🟡 | search users, resolve by username |
+| `UserController` | GET user-profile/{id}, **GET {id}/presence** | 🟡 | search users, resolve by username |
 | `ContactController` | POST, PUT, DELETE, GET, GET search | ✅ | — |
 | `BlockedUsersController` | POST/DELETE/GET | ✅ | — |
 | `ChatsController` | groups, channels, **private/{userId}**, **GET my**, join, **leave (owner-transfer)**, members add/remove, **GET members**, promote/demote, GET/PUT info, mute/unmute, archive/unarchive, pin/unpin | 🟡 | saved-messages chat, channel subscriber model |
@@ -101,5 +101,8 @@ Full table in `api-reference.md`.
    (`Domain*/NotFound/Forbidden`); `ExceptionHandlingMiddleware` catches the latter.
 7. **No transaction/outbox** — multi-aggregate writes are not transactional beyond a single
    `SaveChanges`; no outbox for reliable event/integration publishing.
+8. **Transitive `MessagePack` advisory (NU1903)** — pulled in by
+   `Microsoft.AspNetCore.SignalR.StackExchangeRedis`; high-severity GHSA-hv8m-jj95-wg3x. Pin a
+   patched `MessagePack` or await an updated SignalR Redis package. _(M3)_
 
 See `architecture.md` §Issues for severity and fixes.
