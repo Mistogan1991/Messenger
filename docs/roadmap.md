@@ -60,7 +60,7 @@
 | OpenTelemetry traces + metrics | Observability | Serilog | Med | M |
 | Rate limiting / abuse protection (Redis) | Safety at scale | Redis | Med | M |
 | Message partitioning / read-model store | Millions of users | M4 | High | L |
-| CI pipeline (build/test/migrate) | Quality gate | tests | Low | M |
+| CI pipeline (build/test) | Quality gate | tests | Low | M | ✅ Done (GitHub Actions: restore/build/test in Release on push+PR; migrations-check deferred) |
 
 ## Recommended next feature
 **M0 → Domain event dispatch + validation pipeline** is the highest-leverage starting point:

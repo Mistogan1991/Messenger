@@ -1,5 +1,7 @@
 # Messenger
 
+[![CI](https://github.com/Mistogan1991/Messenger/actions/workflows/ci.yml/badge.svg)](https://github.com/Mistogan1991/Messenger/actions/workflows/ci.yml)
+
 A Telegram-inspired messenger backend built with **.NET 10**, **ASP.NET Core**, Clean
 Architecture, DDD, CQRS (MediatR), EF Core + PostgreSQL, JWT auth, and a transactional outbox.
 Object storage runs on MinIO; Redis and RabbitMQ are provisioned for upcoming realtime and
