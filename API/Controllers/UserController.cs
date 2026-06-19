@@ -1,6 +1,7 @@
 ﻿
 using MediatR;
 using Messenger.Application.Common.Models;
+using Messenger.Application.Features.Users.Presence.Queries.GetUserPresence;
 using Messenger.Application.Features.Users.Profile.Queries.GetUserProfile;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -23,6 +24,18 @@ public class UserController : ControllerBase
     public async Task<ActionResult<Result<UserProfileDto>>> GetUserProfile(Guid id)
     {
         var result = await _mediator.Send(new GetUserProfileQuery(id));
+
+        if (!result.IsSuccess)
+            return BadRequest(result);
+
+        return Ok(result);
+    }
+
+    [Authorize]
+    [HttpGet("{id:guid}/presence")]
+    public async Task<IActionResult> GetPresence(Guid id)
+    {
+        var result = await _mediator.Send(new GetUserPresenceQuery(id));
 
         if (!result.IsSuccess)
             return BadRequest(result);

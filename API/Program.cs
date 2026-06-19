@@ -1,5 +1,6 @@
 using Messenger.API;
 using Messenger.API.Extensions;
+using Messenger.API.Hubs;
 using Messenger.API.Middlewares;
 using Messenger.API.Swagger;
 using Messenger.Application;
@@ -14,6 +15,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.AddSerilogLogging();
+builder.AddOpenTelemetryObservability();
 builder.AddApplicationServices();
 builder.AddInfrastructureServices();
 builder.AddPersistenceServices();
@@ -42,6 +44,7 @@ app.UseAuthorization();
 app.UseRateLimiter();
 
 app.MapControllers();
+app.MapHub<ChatHub>("/hubs/chat");
 
 app.MapHealthChecks("/health");
 app.MapHealthChecks("/health/live", new HealthCheckOptions

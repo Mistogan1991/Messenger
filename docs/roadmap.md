@@ -16,7 +16,7 @@
 | Serilog + request logging + `LoggingBehavior` + `/health` | Operability baseline | — | Low | S | ✅ Done |
 | `TransactionBehavior` (multi-step commands) | Wrap command handlers in a transaction | outbox | Low | S | ⏳ Next |
 | Re-enable soft-delete query filter | Deleted rows leak into reads | — | Low | S | ✅ Done |
-| OpenTelemetry traces + metrics | Full observability | Serilog | Med | M | ⏳ Next |
+| OpenTelemetry traces + metrics | Full observability | Serilog | Med | M | ✅ Done (M5) |
 | Integration tests (Testcontainers) | End-to-end safety | unit tests | Med | M | ⏳ Next |
 
 ## Milestone 1 — Core chat completeness
@@ -38,12 +38,12 @@
 | Per-message delivery + seen receipts | Status model beyond last-read | events | Med | M | ⏳ Next |
 
 ## Milestone 3 — Realtime
-| Task | Why | Depends on | Risk | Effort |
-|---|---|---|---|---|
-| SignalR hub (message/typing/presence) | Core realtime UX | M0 events | Med | L |
-| Redis backplane for SignalR | Scale-out | SignalR, Redis | Med | M |
-| Presence + last-seen (Redis) | Re-enable `LastSeenAt` | Redis | Med | M |
-| Typing indicators | UX | SignalR | Low | S |
+| Task | Why | Depends on | Risk | Effort | Status |
+|---|---|---|---|---|---|
+| SignalR hub — new-message push | Core realtime UX | M0 events | Med | L | ✅ Done (`ChatHub` + outbox→`IRealtimeNotifier`; not runtime-verified) |
+| Typing indicators | UX | SignalR | Low | S | ✅ Done (`ChatHub.Typing`/`StopTyping` → `UserTyping`/`UserStoppedTyping`, membership-gated; not runtime-verified) |
+| Redis backplane for SignalR | Scale-out | SignalR, Redis | Med | M | ✅ Done (`AddStackExchangeRedis`, opt-in via `ConnectionStrings:Redis`; compose wired) |
+| Presence + last-seen (Redis) | Re-enable `LastSeenAt` | Redis | Med | M | ✅ Done (`IPresenceTracker` in-memory+Redis; hub lifecycle; `GET /user/{id}/presence`; broadcast + privacy deferred) |
 
 ## Milestone 4 — Distributed infrastructure
 | Task | Why | Depends on | Risk | Effort |
@@ -57,7 +57,7 @@
 | Task | Why | Depends on | Risk | Effort | Status |
 |---|---|---|---|---|---|
 | Docker + docker-compose (api, pg, redis, rabbit, minio) | Repro/dev/prod parity | — | Low | M | ✅ Done (Dockerfile + compose + migrate-on-startup; not yet built/run — no Docker in dev env) |
-| OpenTelemetry traces + metrics | Observability | Serilog | Med | M |
+| OpenTelemetry traces + metrics | Observability | Serilog | Med | M | ✅ Done (ASP.NET Core/HttpClient/runtime; opt-in OTLP export via `OpenTelemetry:OtlpEndpoint`) |
 | Rate limiting / abuse protection | Safety at scale | Redis | Med | M | ✅ Done (built-in ASP.NET limiter: global per-client + tight OTP policy; **per-instance/in-memory** — Redis-backed distributed limiter is a follow-up) |
 | Message partitioning / read-model store | Millions of users | M4 | High | L |
 | CI pipeline (build/test/migrate) | Quality gate | tests | Low | M |
