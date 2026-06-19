@@ -29,7 +29,7 @@ public sealed class LeaveChatHandler : IRequestHandler<LeaveChatCommand, Result>
         if (chat == null)
             return Result.Failure(["Chat not found"]);
 
-        chat.RemoveParticipant(_currentUser.UserId);
+        chat.Leave(_currentUser.UserId);
 
         await _unitOfWork.SaveChangesAsync(ct);
 

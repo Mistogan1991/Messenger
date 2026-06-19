@@ -57,13 +57,13 @@
 | DELETE | `{chatId}/members/{userId}` | `RemoveMemberCommand` | ✅ |
 | POST | `{chatId}/promote-admin/{userId}` | `PromoteAdminCommand` | ✅ |
 | POST | `{chatId}/demote-admin/{userId}` | `DemoteAdminCommand` | ✅ |
+| GET | `my` | `GetMyChatsQuery` | ✅ _(M1)_ chat list w/ last-message preview + per-user flags |
 | GET | `{chatId}` | `GetChatInfoQuery` | ✅ |
 | PUT | `{chatId}` | `EditChatCommand` | ✅ |
 | POST | `{chatId}/mute` `/unmute` | `MuteChatCommand` / `UnMuteChatCommand` | ✅ |
 | POST | `{chatId}/archive` `/unarchive` | `ArchiveChatCommand` / `UnArchiveChatCommand` | ✅ |
 | POST | `{chatId}/pin` `/unpin` | `PinChatCommand` / `UnPinChatCommand` | ✅ |
-| — | **(missing)** list my chats | `GetMyChatsQuery` (not implemented) | ❌ |
-| — | **(missing)** get chat members | `GetChatMembersQuery` exists, **no endpoint** | 🟡 |
+| GET | `{chatId}/members` | `GetChatMembersQuery` | ✅ _(M1)_ member-only; names joined from Users (username left null) |
 
 ## Messages — `/api/messages`
 | Method | Route | Command/Query | Status |
@@ -77,8 +77,8 @@
 | POST | `reaction` | `AddReactionCommand` | ✅ |
 | DELETE | `reaction` | `RemoveReactionCommand` | ✅ |
 | POST | `attachment` | `AddAttachmentCommand` | 🟡 (no upload pipeline) |
-| — | **(missing)** get chat messages | `GetChatMessagesQuery` exists, **no endpoint** | 🟡 |
-| — | **(missing)** get single message | `GetMessageQuery` exists, **no endpoint** | 🟡 |
+| GET | `chat/{chatId}?before=&limit=` | `GetChatMessagesQuery` | ✅ _(M1)_ member-only; keyset paged, newest first, limit≤100 |
+| GET | `{messageId}` | `GetMessageQuery` | ✅ _(M1)_ member-only |
 
-> Action items: expose the existing `GetChatMessages`, `GetMessage`, `GetChatMembers` queries;
-> add `StartPrivateChat` and `GetMyChats`; fix `SendMessage` membership guard.
+> `GetChatMessages` and `GetMessage` were empty template stubs and were implemented in M1
+> (not merely wired). Remaining read gaps: none outstanding for chats/messages.

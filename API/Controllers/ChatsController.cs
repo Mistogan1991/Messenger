@@ -13,6 +13,8 @@ using Messenger.Application.Features.Chats.Commands.UnArchiveChat;
 using Messenger.Application.Features.Chats.Commands.UnMuteChat;
 using Messenger.Application.Features.Chats.Commands.UnPinChat;
 using Messenger.Application.Features.Chats.Queries.GetChatInfo;
+using Messenger.Application.Features.Chats.Queries.GetChatMembers;
+using Messenger.Application.Features.Chats.Queries.GetMyChats;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -129,10 +131,32 @@ public class ChatsController : ControllerBase
         return Ok(result);
     }
 
+    [HttpGet("my")]
+    public async Task<IActionResult> GetMyChats()
+    {
+        var result = await _mediator.Send(new GetMyChatsQuery());
+
+        if (!result.IsSuccess)
+            return BadRequest(result);
+
+        return Ok(result);
+    }
+
     [HttpGet("{chatId}")]
     public async Task<IActionResult> GetInfo(Guid chatId)
     {
         var result = await _mediator.Send(new GetChatInfoQuery(chatId));
+
+        if (!result.IsSuccess)
+            return BadRequest(result);
+
+        return Ok(result);
+    }
+
+    [HttpGet("{chatId:guid}/members")]
+    public async Task<IActionResult> GetMembers(Guid chatId)
+    {
+        var result = await _mediator.Send(new GetChatMembersQuery(chatId));
 
         if (!result.IsSuccess)
             return BadRequest(result);

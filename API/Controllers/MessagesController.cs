@@ -2,6 +2,8 @@
 using Messenger.API.Contracts.Messages;
 using Messenger.API.Mappings;
 using Messenger.Application.Features.Messages.Commands.DeleteMessage;
+using Messenger.Application.Features.Messages.Queries.GetChatMessages;
+using Messenger.Application.Features.Messages.Queries.GetMessage;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -23,6 +25,29 @@ public sealed class MessagesController : ControllerBase
     public async Task<IActionResult> Send(SendMessageRequest request)
     {
         var result = await _mediator.Send(request.ToCommand());
+
+        if (!result.IsSuccess)
+            return BadRequest(result);
+
+        return Ok(result);
+    }
+
+    [HttpGet("chat/{chatId:guid}")]
+    public async Task<IActionResult> GetChatMessages(
+        Guid chatId, [FromQuery] DateTime? before, [FromQuery] int limit = 50)
+    {
+        var result = await _mediator.Send(new GetChatMessagesQuery(chatId, before, limit));
+
+        if (!result.IsSuccess)
+            return BadRequest(result);
+
+        return Ok(result);
+    }
+
+    [HttpGet("{messageId:guid}")]
+    public async Task<IActionResult> GetMessage(Guid messageId)
+    {
+        var result = await _mediator.Send(new GetMessageQuery(messageId));
 
         if (!result.IsSuccess)
             return BadRequest(result);
