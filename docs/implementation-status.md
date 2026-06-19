@@ -53,7 +53,7 @@ Legend: ✅ Completed · 🟡 Partial · ❌ Missing / scaffolded only
 | Notifications | ❌ | `NotificationType` enum only; `Features/Notifications/` empty |
 | Search (global / messages) | ❌ | Only contact search exists |
 | Logging / Serilog | ✅ | Serilog provider configured (`AddSerilogLogging`), console sink, request logging, MediatR `LoggingBehavior`. _(M0)_ |
-| Observability (health/metrics/tracing) | 🟡 | Health checks at `/health`, `/health/live`, `/health/ready` (DB readiness). Metrics/tracing (OpenTelemetry) still missing. _(M0)_ |
+| Observability (health/metrics/tracing) | ✅ | Health checks _(M0)_ + **OpenTelemetry** traces & metrics (ASP.NET Core, HttpClient, runtime), OTLP export when `OpenTelemetry:OtlpEndpoint` set. _(M5)_ Not runtime-verified |
 | Domain events dispatch | ✅ | Events raised in `Message`/`Chat`; persisted to a transactional **outbox** in `SaveChangesAsync` and published at-least-once by `OutboxProcessor` → MediatR. _(M0)_ |
 | Transactional outbox | ✅ | `outbox_messages` table + `OutboxProcessor` background service (polling, retry cap). Migration `AddOutboxMessages`. _(M0)_ |
 | Validation pipeline | ✅ | `ValidationBehavior` registered as open MediatR behavior; validators auto-registered. _(M0)_ |

@@ -16,7 +16,7 @@
 | Serilog + request logging + `LoggingBehavior` + `/health` | Operability baseline | — | Low | S | ✅ Done |
 | `TransactionBehavior` (multi-step commands) | Wrap command handlers in a transaction | outbox | Low | S | ⏳ Next |
 | Re-enable soft-delete query filter | Deleted rows leak into reads | — | Low | S | ✅ Done |
-| OpenTelemetry traces + metrics | Full observability | Serilog | Med | M | ⏳ Next |
+| OpenTelemetry traces + metrics | Full observability | Serilog | Med | M | ✅ Done (M5) |
 | Integration tests (Testcontainers) | End-to-end safety | unit tests | Med | M | ⏳ Next |
 
 ## Milestone 1 — Core chat completeness
@@ -57,7 +57,7 @@
 | Task | Why | Depends on | Risk | Effort | Status |
 |---|---|---|---|---|---|
 | Docker + docker-compose (api, pg, redis, rabbit, minio) | Repro/dev/prod parity | — | Low | M | ✅ Done (Dockerfile + compose + migrate-on-startup; not yet built/run — no Docker in dev env) |
-| OpenTelemetry traces + metrics | Observability | Serilog | Med | M |
+| OpenTelemetry traces + metrics | Observability | Serilog | Med | M | ✅ Done (ASP.NET Core/HttpClient/runtime; opt-in OTLP export via `OpenTelemetry:OtlpEndpoint`) |
 | Rate limiting / abuse protection (Redis) | Safety at scale | Redis | Med | M |
 | Message partitioning / read-model store | Millions of users | M4 | High | L |
 | CI pipeline (build/test/migrate) | Quality gate | tests | Low | M |
