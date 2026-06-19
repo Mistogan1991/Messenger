@@ -46,7 +46,7 @@ Legend: ✅ Completed · 🟡 Partial · ❌ Missing / scaffolded only
 | Read receipts | 🟡 | `MarkAsRead` sets last-read id; no per-message delivery/seen fan-out |
 | Attachments | 🟡 | `AddAttachment` links a fileId; upload pipeline now exists via Files API _(M2)_ |
 | File storage (MinIO) | 🟡 | `IFileStorage` + `MinioFileStorage` (pre-signed PUT/GET URLs); `RequestFileUpload`/`GetFileDownloadUrl` + `FilesController`; `FileRepository` with **download ACL** (uploader / chat-member / profile photo). _(M2)_ Not yet runtime-verified against a live MinIO |
-| Realtime (SignalR) | 🟡 | `ChatHub` at `/hubs/chat` (JoinChat/LeaveChat, membership-gated); new messages pushed via outbox → `IRealtimeNotifier` (`MessageSent` event). _(M3)_ Typing/presence + Redis backplane pending; not runtime-verified |
+| Realtime (SignalR) | 🟡 | `ChatHub` at `/hubs/chat` (JoinChat/LeaveChat + **Typing/StopTyping**, all membership-gated); new messages pushed via outbox → `IRealtimeNotifier` (`MessageSent`); `UserTyping`/`UserStoppedTyping` to others. _(M3)_ Presence + Redis backplane pending; not runtime-verified |
 | Messaging bus (RabbitMQ/MassTransit) | ❌ | Packages referenced; `RabbitMQ/` folder empty; not wired |
 | Caching (Redis) | ❌ | Package referenced; `Redis/` folder empty; not wired |
 | Presence / typing / last-seen | ❌ | `LastSeenAt` commented out in `User` |
