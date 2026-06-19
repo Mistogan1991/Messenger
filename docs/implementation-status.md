@@ -35,7 +35,7 @@ Legend: ✅ Completed · 🟡 Partial · ❌ Missing / scaffolded only
 | Contacts | ✅ | Add/update/delete/list/search |
 | Blocked users | ✅ | Block/unblock/list |
 | Chats — groups | ✅ | Create, edit, members, admins, leave |
-| Chats — channels | 🟡 | Create/join exist; no posting rules, no subscriber model |
+| Chats — channels | 🟡 | Create/join exist; **posting restricted to owner/admins** _(M1, `Chat.CanSendMessages`)_; no dedicated subscriber model yet |
 | Chats — private/saved | 🟡 | `StartPrivateChat` command + endpoint added (idempotent) _(M1)_; Saved Messages still has no command |
 | Chat membership ops | ✅ | Add/remove members, promote/demote admin |
 | Chat per-user state | ✅ | Mute/archive/pin (on `ChatParticipant`) |
