@@ -1,5 +1,7 @@
 ﻿using Messenger.API.HealthChecks;
+using Messenger.API.Realtime;
 using Messenger.API.Swagger;
+using Messenger.Application.Abstractions.Realtime;
 using Messenger.Application.Common.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
@@ -20,6 +22,9 @@ public static class DependencyInjection
         builder.Services.AddControllers();
         builder.Services.AddEndpointsApiExplorer();
         builder.Services.AddSwaggerConfiguration(builder);
+
+        builder.Services.AddSignalR();
+        builder.Services.AddScoped<IRealtimeNotifier, SignalRRealtimeNotifier>();
 
         builder.Services.AddHealthChecks()
             .AddCheck("self", () => HealthCheckResult.Healthy(), tags: ["live"])
@@ -55,6 +60,24 @@ public static class DependencyInjection
                             new SymmetricSecurityKey(
                                 Encoding.UTF8.GetBytes(jwtSettings.SecretKey))
                     };
+
+                // WebSocket clients can't send an Authorization header, so accept the JWT from the
+                // access_token query string for hub connections.
+                options.Events = new JwtBearerEvents
+                {
+                    OnMessageReceived = context =>
+                    {
+                        var accessToken = context.Request.Query["access_token"];
+
+                        if (!string.IsNullOrEmpty(accessToken) &&
+                            context.HttpContext.Request.Path.StartsWithSegments("/hubs"))
+                        {
+                            context.Token = accessToken;
+                        }
+
+                        return Task.CompletedTask;
+                    }
+                };
             });
     }
 

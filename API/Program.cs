@@ -1,4 +1,5 @@
 using Messenger.API;
+using Messenger.API.Hubs;
 using Messenger.API.Middlewares;
 using Messenger.API.Swagger;
 using Messenger.Application;
@@ -38,6 +39,7 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
+app.MapHub<ChatHub>("/hubs/chat");
 
 app.MapHealthChecks("/health");
 app.MapHealthChecks("/health/live", new HealthCheckOptions
