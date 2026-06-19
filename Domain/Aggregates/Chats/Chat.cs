@@ -153,6 +153,33 @@ public sealed class Chat : AggregateRoot<Guid>
         RaiseDomainEvent(new ParticipantRemovedEvent(Id, userId));
     }
 
+    /// <summary>
+    /// A participant leaves the chat. If the leaving participant is the owner and other
+    /// participants remain, ownership transfers to a successor (an admin if one exists,
+    /// otherwise the longest-standing member) so the chat is never left ownerless.
+    /// </summary>
+    public void Leave(Guid userId)
+    {
+        var participant = _participants.SingleOrDefault(x => x.UserId == userId);
+
+        if (participant is null) return;
+
+        if (participant.Role == ChatRole.Owner)
+        {
+            var successor = _participants
+                .Where(x => x.UserId != userId)
+                .OrderByDescending(x => x.Role == ChatRole.Admin)
+                .ThenBy(x => x.JoinedAtUtc)
+                .FirstOrDefault();
+
+            successor?.TransferOwnership();
+        }
+
+        _participants.Remove(participant);
+
+        RaiseDomainEvent(new ParticipantRemovedEvent(Id, userId));
+    }
+
     public void AddParticipants(IEnumerable<Guid> userIds)
     {
         foreach (var userId in userIds)

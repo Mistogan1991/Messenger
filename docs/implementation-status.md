@@ -72,7 +72,7 @@ Legend: ✅ Completed · 🟡 Partial · ❌ Missing / scaffolded only
 | `UserController` | GET user-profile/{id} | 🟡 | search users, resolve by username |
 | `ContactController` | POST, PUT, DELETE, GET, GET search | ✅ | — |
 | `BlockedUsersController` | POST/DELETE/GET | ✅ | — |
-| `ChatsController` | groups, channels, **private/{userId}**, **GET my**, join, leave, members add/remove, promote/demote, GET/PUT info, mute/unmute, archive/unarchive, pin/unpin | 🟡 | GET members endpoint, leave-ownership transfer |
+| `ChatsController` | groups, channels, **private/{userId}**, **GET my**, join, **leave (owner-transfer)**, members add/remove, **GET members**, promote/demote, GET/PUT info, mute/unmute, archive/unarchive, pin/unpin | 🟡 | saved-messages chat, channel subscriber model |
 | `MessagesController` | send, edit, delete, reply, forward, read, reaction add/remove, attachment, **GET chat/{chatId}** (paged), **GET {messageId}** | 🟡 | search, pin/unpin message |
 
 > Note: `GetChatMessages` / `GetMessage` were empty template stubs — now **implemented** and
