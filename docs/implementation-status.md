@@ -101,8 +101,12 @@ Full table in `api-reference.md`.
    (`Domain*/NotFound/Forbidden`); `ExceptionHandlingMiddleware` catches the latter.
 7. **No transaction/outbox** — multi-aggregate writes are not transactional beyond a single
    `SaveChanges`; no outbox for reliable event/integration publishing.
-8. **Transitive `MessagePack` advisory (NU1903)** — pulled in by
-   `Microsoft.AspNetCore.SignalR.StackExchangeRedis`; high-severity GHSA-hv8m-jj95-wg3x. Pin a
-   patched `MessagePack` or await an updated SignalR Redis package. _(M3)_
+8. **Transitive `MessagePack` advisory (NU1903, GHSA-hv8m-jj95-wg3x)** — via
+   `Microsoft.AspNetCore.SignalR.StackExchangeRedis`. **No patched MessagePack release exists**
+   (2.5.x and 3.1.x are all flagged), so it can't be upgraded away. **Risk accepted & suppressed**
+   (`NuGetAuditSuppress` in `API/Messenger.API.csproj` with justification): MessagePack is only
+   used to serialize SignalR messages over the **internal Redis backplane** (data produced by our
+   own instances, not end-user input). Mitigation: keep Redis network-isolated. Remove the
+   suppression when a fixed release ships. _(M3)_
 
 See `architecture.md` §Issues for severity and fixes.
