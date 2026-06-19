@@ -54,9 +54,9 @@
 | Global search (messages/users/chats) | Discovery | read models | High | L |
 
 ## Milestone 5 — Scale & production readiness
-| Task | Why | Depends on | Risk | Effort |
-|---|---|---|---|---|
-| Docker + docker-compose (api, pg, redis, rabbit, minio) | Repro/dev/prod parity | — | Low | M |
+| Task | Why | Depends on | Risk | Effort | Status |
+|---|---|---|---|---|---|
+| Docker + docker-compose (api, pg, redis, rabbit, minio) | Repro/dev/prod parity | — | Low | M | ✅ Done (Dockerfile + compose + migrate-on-startup; not yet built/run — no Docker in dev env) |
 | OpenTelemetry traces + metrics | Observability | Serilog | Med | M |
 | Rate limiting / abuse protection (Redis) | Safety at scale | Redis | Med | M |
 | Message partitioning / read-model store | Millions of users | M4 | High | L |
