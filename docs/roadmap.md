@@ -58,7 +58,7 @@
 |---|---|---|---|---|---|
 | Docker + docker-compose (api, pg, redis, rabbit, minio) | Repro/dev/prod parity | — | Low | M | ✅ Done (Dockerfile + compose + migrate-on-startup; not yet built/run — no Docker in dev env) |
 | OpenTelemetry traces + metrics | Observability | Serilog | Med | M | ✅ Done (ASP.NET Core/HttpClient/runtime; opt-in OTLP export via `OpenTelemetry:OtlpEndpoint`) |
-| Rate limiting / abuse protection (Redis) | Safety at scale | Redis | Med | M |
+| Rate limiting / abuse protection | Safety at scale | Redis | Med | M | ✅ Done (built-in ASP.NET limiter: global per-client + tight OTP policy; **per-instance/in-memory** — Redis-backed distributed limiter is a follow-up) |
 | Message partitioning / read-model store | Millions of users | M4 | High | L |
 | CI pipeline (build/test/migrate) | Quality gate | tests | Low | M |
 

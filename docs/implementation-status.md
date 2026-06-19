@@ -52,6 +52,7 @@ Legend: ✅ Completed · 🟡 Partial · ❌ Missing / scaffolded only
 | Presence / typing / last-seen | 🟡 | `User.LastSeenAt` re-enabled (migration `AddUserLastSeenAt`); `IPresenceTracker` (in-memory + Redis); hub tracks connect/disconnect, stamps last-seen on last disconnect; `GET /api/user/{id}/presence`. _(M3)_ Typing done separately; presence broadcast + last-seen privacy pending |
 | Notifications | ❌ | `NotificationType` enum only; `Features/Notifications/` empty |
 | Search (global / messages) | ❌ | Only contact search exists |
+| Rate limiting | 🟡 | Built-in ASP.NET limiter: global per-client (100/min) + tight OTP policy (5/5min) → 429. _(M5)_ Per-instance/in-memory; Redis-backed distributed limiter pending |
 | Logging / Serilog | ✅ | Serilog provider configured (`AddSerilogLogging`), console sink, request logging, MediatR `LoggingBehavior`. _(M0)_ |
 | Observability (health/metrics/tracing) | ✅ | Health checks _(M0)_ + **OpenTelemetry** traces & metrics (ASP.NET Core, HttpClient, runtime), OTLP export when `OpenTelemetry:OtlpEndpoint` set. _(M5)_ Not runtime-verified |
 | Domain events dispatch | ✅ | Events raised in `Message`/`Chat`; persisted to a transactional **outbox** in `SaveChangesAsync` and published at-least-once by `OutboxProcessor` → MediatR. _(M0)_ |

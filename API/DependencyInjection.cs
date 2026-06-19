@@ -1,4 +1,5 @@
-﻿using Messenger.API.HealthChecks;
+﻿using Messenger.API.Extensions;
+using Messenger.API.HealthChecks;
 using Messenger.API.Realtime;
 using Messenger.API.Swagger;
 using Messenger.Application.Abstractions.Realtime;
@@ -24,6 +25,7 @@ public static class DependencyInjection
         builder.Services.AddControllers();
         builder.Services.AddEndpointsApiExplorer();
         builder.Services.AddSwaggerConfiguration(builder);
+        builder.Services.AddRateLimitingPolicies();
 
         var signalR = builder.Services.AddSignalR();
 
