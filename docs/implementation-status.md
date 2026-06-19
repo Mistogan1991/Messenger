@@ -13,7 +13,7 @@ Clean Architecture, 6 projects (`Messenger.slnx`):
 |---|---|---|
 | `Messenger.Domain` | Domain | Aggregates, entities, value objects, domain events, enums |
 | `Messenger.Application` | Application | CQRS commands/queries, handlers, DTOs, abstractions |
-| `Messenger.Contracts` | Contracts | Shared contracts (currently **empty**) |
+| `Messenger.Contracts` | Contracts | Shared contracts — integration events (`MessageSentIntegrationEvent`) _(M4)_ |
 | `Messenger.Persistence` | Infrastructure | EF Core DbContext, configurations, repositories, migrations |
 | `Messenger.Infrastructure` | Infrastructure | Auth (JWT/OTP/hash), `CurrentUser` |
 | `Messenger.API` | Presentation | Controllers, request contracts, mappings, middleware |
@@ -47,7 +47,7 @@ Legend: ✅ Completed · 🟡 Partial · ❌ Missing / scaffolded only
 | Attachments | 🟡 | `AddAttachment` links a fileId; upload pipeline now exists via Files API _(M2)_ |
 | File storage (MinIO) | 🟡 | `IFileStorage` + `MinioFileStorage` (pre-signed PUT/GET URLs); `RequestFileUpload`/`GetFileDownloadUrl` + `FilesController`; `FileRepository` with **download ACL** (uploader / chat-member / profile photo). _(M2)_ Not yet runtime-verified against a live MinIO |
 | Realtime (SignalR) | ❌ | `Hubs/` and `SignalR/` folders empty; no hub, no DI |
-| Messaging bus (RabbitMQ/MassTransit) | ❌ | Packages referenced; `RabbitMQ/` folder empty; not wired |
+| Messaging bus (RabbitMQ/MassTransit) | 🟡 | MassTransit wired (RabbitMQ when `RabbitMq:Host` set, else in-memory); `MessageSentEvent` → `MessageSentIntegrationEvent` (Contracts) published via `IIntegrationEventPublisher`; `MessageSentConsumer`. _(M4)_ Not runtime-verified; MassTransit v9 licensing applies |
 | Caching (Redis) | ❌ | Package referenced; `Redis/` folder empty; not wired |
 | Presence / typing / last-seen | ❌ | `LastSeenAt` commented out in `User` |
 | Notifications | ❌ | `NotificationType` enum only; `Features/Notifications/` empty |
