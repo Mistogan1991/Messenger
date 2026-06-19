@@ -59,9 +59,9 @@ Legend: ✅ Completed · 🟡 Partial · ❌ Missing / scaffolded only
 | Validation pipeline | ✅ | `ValidationBehavior` registered as open MediatR behavior; validators auto-registered. _(M0)_ |
 | MediatR pipeline behaviors | ❌ | `Behaviors/` folders empty (Logging/Transaction/Validation) |
 | AutoMapper usage | 🟡 | Package referenced; mapping done via hand-written extension methods |
-| Docker / docker-compose | ❌ | None present |
+| Docker / docker-compose | 🟡 | `Dockerfile` + `docker-compose.yml` (api, postgres, minio, redis, rabbitmq); migrate-on-startup. _(M5)_ **Not built/run here — no Docker in dev env** |
 | Tests (unit/integration) | 🟡 | `tests/Messenger.UnitTests` (20 tests: domain events, validation behavior, dispatcher, outbox round-trip + EF InMemory outbox flows). No full API integration tests yet. _(M0)_ |
-| README | ❌ | One-line placeholder |
+| README | ✅ | Overview, architecture table, Docker + local run instructions. _(M5)_ |
 
 ## 3. Controllers
 
