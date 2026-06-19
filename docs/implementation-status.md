@@ -46,7 +46,7 @@ Legend: ✅ Completed · 🟡 Partial · ❌ Missing / scaffolded only
 | Read receipts | 🟡 | `MarkAsRead` sets last-read id; no per-message delivery/seen fan-out |
 | Attachments | 🟡 | `AddAttachment` links a fileId; **no upload pipeline / MinIO** |
 | File storage (MinIO) | ❌ | Package referenced, `Storage/` folder empty, no client/abstraction |
-| Realtime (SignalR) | ❌ | `Hubs/` and `SignalR/` folders empty; no hub, no DI |
+| Realtime (SignalR) | 🟡 | `ChatHub` at `/hubs/chat` (JoinChat/LeaveChat, membership-gated); new messages pushed via outbox → `IRealtimeNotifier` (`MessageSent` event). _(M3)_ Typing/presence + Redis backplane pending; not runtime-verified |
 | Messaging bus (RabbitMQ/MassTransit) | ❌ | Packages referenced; `RabbitMQ/` folder empty; not wired |
 | Caching (Redis) | ❌ | Package referenced; `Redis/` folder empty; not wired |
 | Presence / typing / last-seen | ❌ | `LastSeenAt` commented out in `User` |

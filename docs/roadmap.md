@@ -37,12 +37,12 @@
 | Per-message delivery + seen receipts | Status model beyond last-read | events | Med | M |
 
 ## Milestone 3 — Realtime
-| Task | Why | Depends on | Risk | Effort |
-|---|---|---|---|---|
-| SignalR hub (message/typing/presence) | Core realtime UX | M0 events | Med | L |
-| Redis backplane for SignalR | Scale-out | SignalR, Redis | Med | M |
-| Presence + last-seen (Redis) | Re-enable `LastSeenAt` | Redis | Med | M |
-| Typing indicators | UX | SignalR | Low | S |
+| Task | Why | Depends on | Risk | Effort | Status |
+|---|---|---|---|---|---|
+| SignalR hub — new-message push | Core realtime UX | M0 events | Med | L | ✅ Done (`ChatHub` + outbox→`IRealtimeNotifier`; not runtime-verified) |
+| Typing indicators | UX | SignalR | Low | S | ⏳ Next |
+| Redis backplane for SignalR | Scale-out | SignalR, Redis | Med | M | ⏳ Next |
+| Presence + last-seen (Redis) | Re-enable `LastSeenAt` | Redis | Med | M | ⏳ Next |
 
 ## Milestone 4 — Distributed infrastructure
 | Task | Why | Depends on | Risk | Effort |
