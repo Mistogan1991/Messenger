@@ -8,11 +8,30 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="10.0.3" />
+    <PackageReference Include="Microsoft.AspNetCore.SignalR.StackExchangeRedis" Version="10.0.8" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="10.0.8">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
+    <PackageReference Include="OpenTelemetry.Exporter.OpenTelemetryProtocol" Version="1.16.0" />
+    <PackageReference Include="OpenTelemetry.Extensions.Hosting" Version="1.16.0" />
+    <PackageReference Include="OpenTelemetry.Instrumentation.AspNetCore" Version="1.15.2" />
+    <PackageReference Include="OpenTelemetry.Instrumentation.Http" Version="1.15.1" />
+    <PackageReference Include="OpenTelemetry.Instrumentation.Runtime" Version="1.15.1" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="10.2.1" />
+  </ItemGroup>
+
+  <!--
+    MessagePack (transitive via Microsoft.AspNetCore.SignalR.StackExchangeRedis) is flagged by
+    GHSA-hv8m-jj95-wg3x. As of this writing NO patched MessagePack version exists (2.5.x and 3.1.x
+    are all flagged), so there is nothing to upgrade to. Exposure is low and accepted: MessagePack
+    is only used to serialize SignalR messages over the Redis backplane, whose data is produced by
+    our own API instances and confined to an internally-networked Redis (not reachable by end
+    users). Mitigation: keep Redis network-isolated. Remove this suppression once a fixed
+    MessagePack release is published.
+  -->
+  <ItemGroup>
+    <NuGetAuditSuppress Include="https://github.com/advisories/GHSA-hv8m-jj95-wg3x" />
   </ItemGroup>
 
   <ItemGroup>

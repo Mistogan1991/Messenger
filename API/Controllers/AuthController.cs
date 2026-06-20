@@ -9,8 +9,10 @@ using Messenger.Application.Features.Auth.Commands.RequestOtp;
 using Messenger.Application.Features.Auth.Commands.RevokeSession;
 using Messenger.Application.Features.Auth.Commands.VerifyOtp;
 using Messenger.Application.Features.Auth.Queries.GetSessions;
+using Messenger.API.Extensions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.RateLimiting;
 
 namespace Messenger.API.Controllers;
 
@@ -25,6 +27,7 @@ public class AuthController : ControllerBase
         _mediator = mediator;
     }
 
+    [EnableRateLimiting(RateLimitingExtensions.OtpPolicy)]
     [HttpPost("request-otp")]
     public async Task<ActionResult<Result<RequestOtpCommandResult>>> RequestOtp(RequestOtpRequest request)
     {
