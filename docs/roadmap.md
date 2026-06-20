@@ -51,7 +51,7 @@
 | RabbitMQ/MassTransit integration events | Decoupled fan-out, notifications | M0 outbox | High | L | ✅ Done (MassTransit + `MessageSentIntegrationEvent` publish + consumer; opt-in RabbitMQ, in-memory fallback; not runtime-verified) |
 | Notifications service (push/in-app) | Engagement | Rabbit, events | Med | M | ⏳ Next (consumer seam ready) |
 | Redis caching (profiles, chat lists) | Latency at scale | Redis | Med | M | ⏳ Next |
-| Global search (messages/users/chats) | Discovery | read models | High | L | ⏳ Next |
+| Global search (messages/users/chats) | Discovery | read models | High | L | 🟡 Message search done (`GET /api/messages/search`, member-scoped, case-insensitive); user/chat search pending |
 
 ## Milestone 5 — Scale & production readiness
 | Task | Why | Depends on | Risk | Effort | Status |
