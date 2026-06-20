@@ -50,7 +50,7 @@ Legend: ✅ Completed · 🟡 Partial · ❌ Missing / scaffolded only
 | Messaging bus (RabbitMQ/MassTransit) | ❌ | Packages referenced; `RabbitMQ/` folder empty; not wired |
 | Caching (Redis) | 🟡 | Wired as the **SignalR backplane** (`AddStackExchangeRedis`, enabled when `ConnectionStrings:Redis` is set). _(M3)_ Not yet used for general caching |
 | Presence / typing / last-seen | 🟡 | `User.LastSeenAt` re-enabled (migration `AddUserLastSeenAt`); `IPresenceTracker` (in-memory + Redis); hub tracks connect/disconnect, stamps last-seen on last disconnect; `GET /api/user/{id}/presence`. _(M3)_ Typing done separately; presence broadcast + last-seen privacy pending |
-| Notifications | ❌ | `NotificationType` enum only; `Features/Notifications/` empty |
+| Notifications | 🟡 | In-app feed: `Notification` aggregate + migration `AddNotifications`; fan-out on `MessageSentEvent` (one per member except sender); `NotificationsController` (list, unread-count, mark read / read-all). _(M4)_ Push delivery + mute-aware filtering pending |
 | Search (global / messages) | ❌ | Only contact search exists |
 | Rate limiting | 🟡 | Built-in ASP.NET limiter: global per-client (100/min) + tight OTP policy (5/5min) → 429. _(M5)_ Per-instance/in-memory; Redis-backed distributed limiter pending |
 | Logging / Serilog | ✅ | Serilog provider configured (`AddSerilogLogging`), console sink, request logging, MediatR `LoggingBehavior`. _(M0)_ |
@@ -76,6 +76,7 @@ Legend: ✅ Completed · 🟡 Partial · ❌ Missing / scaffolded only
 | `ChatsController` | groups, channels, **private/{userId}**, **GET my**, join, **leave (owner-transfer)**, members add/remove, **GET members**, promote/demote, GET/PUT info, mute/unmute, archive/unarchive, pin/unpin | 🟡 | saved-messages chat, channel subscriber model |
 | `MessagesController` | send, edit, delete, reply, forward, read, reaction add/remove, attachment, **GET chat/{chatId}** (paged), **GET {messageId}** | 🟡 | search, pin/unpin message |
 | `FilesController` | POST upload-url, GET {id}/download-url (ACL-gated) | ✅ _(M2)_ | — |
+| `NotificationsController` | GET (list), GET unread-count, POST {id}/read, POST read-all | ✅ _(M4)_ | push delivery |
 
 > Note: `GetChatMessages` / `GetMessage` were empty template stubs — now **implemented** and
 > exposed (M1), member-gated. `GetChatMembers` now loads participants via a real projection
