@@ -49,5 +49,30 @@ namespace Messenger.Persistence.Repositories
                     m.CreatedAtUtc))
                 .ToListAsync(ct);
         }
+
+        public async Task<List<MessageDto>> SearchAsync(
+            Guid userId, string term, int limit, CancellationToken ct = default)
+        {
+            var pattern = term.ToLower();
+
+            // Soft-delete query filters exclude deleted messages/chats/participants automatically.
+            return await _context.Messages
+                .Where(m => m.Content != null && m.Content.ToLower().Contains(pattern))
+                .Where(m => _context.Chats.Any(c =>
+                    c.Id == m.ChatId && c.Participants.Any(p => p.UserId == userId)))
+                .OrderByDescending(m => m.CreatedAtUtc)
+                .Take(limit)
+                .Select(m => new MessageDto(
+                    m.Id,
+                    m.ChatId,
+                    m.SenderId,
+                    m.Type,
+                    m.Content,
+                    m.ReplyToMessageId,
+                    m.IsEdited,
+                    m.EditedAtUtc,
+                    m.CreatedAtUtc))
+                .ToListAsync(ct);
+        }
     }
 }

@@ -19,6 +19,8 @@ public class MessageSentNotificationHandlerTests
         public Task<Message?> GetByIdAsync(Guid id, CancellationToken ct = default) => Task.FromResult(ToReturn);
         public Task<List<MessageDto>> GetChatMessagesAsync(Guid chatId, DateTime? before, int limit, CancellationToken ct = default)
             => throw new NotSupportedException();
+        public Task<List<MessageDto>> SearchAsync(Guid userId, string term, int limit, CancellationToken ct = default)
+            => throw new NotSupportedException();
     }
 
     private sealed class FakeRealtimeNotifier : IRealtimeNotifier

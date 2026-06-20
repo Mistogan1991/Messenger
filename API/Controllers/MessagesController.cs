@@ -4,6 +4,7 @@ using Messenger.API.Mappings;
 using Messenger.Application.Features.Messages.Commands.DeleteMessage;
 using Messenger.Application.Features.Messages.Queries.GetChatMessages;
 using Messenger.Application.Features.Messages.Queries.GetMessage;
+using Messenger.Application.Features.Messages.Queries.SearchMessages;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -37,6 +38,17 @@ public sealed class MessagesController : ControllerBase
         Guid chatId, [FromQuery] DateTime? before, [FromQuery] int limit = 50)
     {
         var result = await _mediator.Send(new GetChatMessagesQuery(chatId, before, limit));
+
+        if (!result.IsSuccess)
+            return BadRequest(result);
+
+        return Ok(result);
+    }
+
+    [HttpGet("search")]
+    public async Task<IActionResult> Search([FromQuery] string q, [FromQuery] int limit = 50)
+    {
+        var result = await _mediator.Send(new SearchMessagesQuery(q, limit));
 
         if (!result.IsSuccess)
             return BadRequest(result);
