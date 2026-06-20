@@ -36,7 +36,7 @@ Legend: ✅ Completed · 🟡 Partial · ❌ Missing / scaffolded only
 | Blocked users | ✅ | Block/unblock/list |
 | Chats — groups | ✅ | Create, edit, members, admins, leave |
 | Chats — channels | 🟡 | Create/join exist; **posting restricted to owner/admins** _(M1, `Chat.CanSendMessages`)_; no dedicated subscriber model yet |
-| Chats — private/saved | 🟡 | `StartPrivateChat` command + endpoint added (idempotent) _(M1)_; Saved Messages still has no command |
+| Chats — private/saved | ✅ | `StartPrivateChat` (idempotent) _(M1)_ + **Saved Messages** get-or-create (`POST /api/chats/saved-messages`, idempotent) _(M1)_ |
 | Chat membership ops | ✅ | Add/remove members, promote/demote admin |
 | Chat per-user state | ✅ | Mute/archive/pin (on `ChatParticipant`) |
 | Messaging — send/edit/delete | ✅ | Text only |
@@ -73,7 +73,7 @@ Legend: ✅ Completed · 🟡 Partial · ❌ Missing / scaffolded only
 | `UserController` | GET user-profile/{id}, **GET {id}/presence** | 🟡 | search users, resolve by username |
 | `ContactController` | POST, PUT, DELETE, GET, GET search | ✅ | — |
 | `BlockedUsersController` | POST/DELETE/GET | ✅ | — |
-| `ChatsController` | groups, channels, **private/{userId}**, **GET my**, join, **leave (owner-transfer)**, members add/remove, **GET members**, promote/demote, GET/PUT info, mute/unmute, archive/unarchive, pin/unpin | 🟡 | saved-messages chat, channel subscriber model |
+| `ChatsController` | groups, channels, **private/{userId}**, **saved-messages**, **GET my**, join, **leave (owner-transfer)**, members add/remove, **GET members**, promote/demote, GET/PUT info, mute/unmute, archive/unarchive, pin/unpin | 🟡 | channel subscriber model |
 | `MessagesController` | send, edit, delete, reply, forward, read, reaction add/remove, attachment, **GET chat/{chatId}** (paged), **GET {messageId}** | 🟡 | search, pin/unpin message |
 | `FilesController` | POST upload-url, GET {id}/download-url (ACL-gated) | ✅ _(M2)_ | — |
 
