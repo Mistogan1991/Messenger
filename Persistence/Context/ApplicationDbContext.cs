@@ -2,6 +2,7 @@ using System.Linq.Expressions;
 using Messenger.Domain.Aggregates.Auth;
 using Messenger.Domain.Aggregates.Chats;
 using Messenger.Domain.Aggregates.Messages;
+using Messenger.Domain.Aggregates.Notifications;
 using Messenger.Domain.Aggregates.Users;
 using Messenger.Domain.Common;
 using Messenger.Persistence.Outbox;
@@ -24,6 +25,8 @@ public sealed class ApplicationDbContext : DbContext
     public DbSet<Message> Messages => Set<Message>();
 
     public DbSet<Domain.Aggregates.Files.File> Files => Set<Domain.Aggregates.Files.File>();
+
+    public DbSet<Notification> Notifications => Set<Notification>();
 
     public DbSet<OutboxMessage> OutboxMessages => Set<OutboxMessage>();
 
