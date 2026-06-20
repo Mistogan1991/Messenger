@@ -57,6 +57,8 @@ services:
         condition: service_healthy
       minio:
         condition: service_started
+      rabbitmq:
+        condition: service_started
       redis:
         condition: service_started
     environment:
@@ -69,6 +71,9 @@ services:
       Minio__SecretKey: "minioadmin"
       Minio__Bucket: "messenger"
       Minio__UseSsl: "false"
+      RabbitMq__Host: "rabbitmq"
+      RabbitMq__Username: "guest"
+      RabbitMq__Password: "guest"
     ports:
       - "8080:8080"
 

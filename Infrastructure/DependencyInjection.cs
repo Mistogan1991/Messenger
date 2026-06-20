@@ -1,7 +1,11 @@
+using MassTransit;
 using Messenger.Application.Abstractions.Authentication;
 using Messenger.Application.Abstractions.Security;
 using Messenger.Application.Abstractions.Storage;
+using Messenger.Application.Common.Messaging;
 using Messenger.Infrastructure.Authentication;
+using Messenger.Infrastructure.Messaging;
+using Messenger.Infrastructure.Messaging.Consumers;
 using Messenger.Infrastructure.Security;
 using Messenger.Infrastructure.Storage;
 using Microsoft.Extensions.Configuration;
@@ -24,6 +28,39 @@ public static class DependencyInjection
         builder.Services.AddScoped<ICurrentUser, CurrentUser>();
 
         AddMinioStorage(builder);
+        AddMessaging(builder);
+    }
+
+    private static void AddMessaging(IHostApplicationBuilder builder)
+    {
+        builder.Services.AddScoped<IIntegrationEventPublisher, MassTransitIntegrationEventPublisher>();
+
+        var rabbit = builder.Configuration.GetSection("RabbitMq");
+        var host = rabbit["Host"];
+
+        builder.Services.AddMassTransit(bus =>
+        {
+            bus.AddConsumer<MessageSentConsumer>();
+
+            if (!string.IsNullOrWhiteSpace(host))
+            {
+                // Real broker when configured.
+                bus.UsingRabbitMq((context, cfg) =>
+                {
+                    cfg.Host(host, h =>
+                    {
+                        h.Username(rabbit["Username"] ?? "guest");
+                        h.Password(rabbit["Password"] ?? "guest");
+                    });
+                    cfg.ConfigureEndpoints(context);
+                });
+            }
+            else
+            {
+                // In-process transport so the app runs locally without RabbitMQ.
+                bus.UsingInMemory((context, cfg) => cfg.ConfigureEndpoints(context));
+            }
+        });
     }
 
     private static void AddMinioStorage(IHostApplicationBuilder builder)
