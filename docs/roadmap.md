@@ -49,7 +49,7 @@
 | Task | Why | Depends on | Risk | Effort | Status |
 |---|---|---|---|---|---|
 | RabbitMQ/MassTransit integration events | Decoupled fan-out, notifications | M0 outbox | High | L | ✅ Done (MassTransit + `MessageSentIntegrationEvent` publish + consumer; opt-in RabbitMQ, in-memory fallback; not runtime-verified) |
-| Notifications service (push/in-app) | Engagement | Rabbit, events | Med | M | ⏳ Next (consumer seam ready) |
+| Notifications service (in-app feed) | Engagement | events | Med | M | ✅ Done (in-app: aggregate + fan-out on message-sent + read management; push delivery pending) |
 | Redis caching (profiles, chat lists) | Latency at scale | Redis | Med | M | ⏳ Next |
 | Global search (messages/users/chats) | Discovery | read models | High | L | ⏳ Next |
 
