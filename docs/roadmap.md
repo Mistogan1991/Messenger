@@ -46,12 +46,12 @@
 | Presence + last-seen (Redis) | Re-enable `LastSeenAt` | Redis | Med | M | ✅ Done (`IPresenceTracker` in-memory+Redis; hub lifecycle; `GET /user/{id}/presence`; broadcast + privacy deferred) |
 
 ## Milestone 4 — Distributed infrastructure
-| Task | Why | Depends on | Risk | Effort |
-|---|---|---|---|---|
-| RabbitMQ/MassTransit + outbox consumers | Decoupled fan-out, notifications | M0 outbox | High | L |
-| Notifications service (push/in-app) | Engagement | Rabbit, events | Med | M |
-| Redis caching (profiles, chat lists) | Latency at scale | Redis | Med | M |
-| Global search (messages/users/chats) | Discovery | read models | High | L |
+| Task | Why | Depends on | Risk | Effort | Status |
+|---|---|---|---|---|---|
+| RabbitMQ/MassTransit integration events | Decoupled fan-out, notifications | M0 outbox | High | L | ✅ Done (MassTransit + `MessageSentIntegrationEvent` publish + consumer; opt-in RabbitMQ, in-memory fallback; not runtime-verified) |
+| Notifications service (push/in-app) | Engagement | Rabbit, events | Med | M | ⏳ Next (consumer seam ready) |
+| Redis caching (profiles, chat lists) | Latency at scale | Redis | Med | M | ⏳ Next |
+| Global search (messages/users/chats) | Discovery | read models | High | L | ⏳ Next |
 
 ## Milestone 5 — Scale & production readiness
 | Task | Why | Depends on | Risk | Effort | Status |
