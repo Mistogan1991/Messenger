@@ -2,6 +2,7 @@
 using Messenger.API.Contracts.Chats;
 using Messenger.API.Mappings;
 using Messenger.Application.Features.Chats.Commands.ArchiveChat;
+using Messenger.Application.Features.Chats.Commands.GetOrCreateSavedMessages;
 using Messenger.Application.Features.Chats.Commands.JoinChannel;
 using Messenger.Application.Features.Chats.Commands.LeaveChat;
 using Messenger.Application.Features.Chats.Commands.MuteChat;
@@ -58,6 +59,17 @@ public class ChatsController : ControllerBase
     public async Task<IActionResult> StartPrivate(Guid userId)
     {
         var result = await _mediator.Send(new StartPrivateChatCommand(userId));
+
+        if (!result.IsSuccess)
+            return BadRequest(result);
+
+        return Ok(result);
+    }
+
+    [HttpPost("saved-messages")]
+    public async Task<IActionResult> GetOrCreateSavedMessages()
+    {
+        var result = await _mediator.Send(new GetOrCreateSavedMessagesCommand());
 
         if (!result.IsSuccess)
             return BadRequest(result);

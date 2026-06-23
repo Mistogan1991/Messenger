@@ -36,6 +36,14 @@ public sealed class ChatRepository : IChatRepository
             .FirstOrDefaultAsync(ct);
     }
 
+    public async Task<Chat?> GetSavedMessagesChatAsync(Guid userId, CancellationToken ct)
+    {
+        return await _context.Chats
+            .Where(c => c.Type == ChatType.SavedMessages)
+            .Where(c => c.Participants.Any(p => p.UserId == userId))
+            .FirstOrDefaultAsync(ct);
+    }
+
     public async Task<List<MyChatDto>> GetUserChatsAsync(Guid userId, CancellationToken ct)
     {
         // Soft-delete query filters exclude deleted chats, participants and messages automatically.
